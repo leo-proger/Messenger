@@ -1,0 +1,290 @@
+:root {
+  --darkgray: #5b5b5b;
+  --lightgray: #b7b7b7;
+  --gray: #24272b;
+  --gray2: #495057;
+  --black: #111112;
+  --lightblack: #232325;
+  --blue: #1976d2;
+}
+
+.main-row {
+  height: 100vh;
+}
+
+.line {
+  width: 100%;
+  border: none;
+  border-top: 2px solid var(--gray2);
+}
+
+.online {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: lightgreen;
+}
+
+.offline {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--lightgray);
+}
+
+/* ========== Навигационная панель ========== */
+.main-navbar {
+  width: 60px;
+  border-right: 2px solid var(--gray2);
+}
+
+.nav-link > i {
+  color: var(--lightgray);
+  font-size: 22px;
+}
+
+.nav-link > i:hover {
+  color: var(--blue);
+}
+
+/* ========== Список чатов ========== */
+#chat-list {
+  background-color: var(--gray);
+  width: 38%;
+  border-right: 2px solid var(--gray2);
+}
+
+.chats-title {
+  color: whitesmoke;
+}
+
+.big-navbar-toggler {
+  width: 20px;
+  height: 40px;
+  position: relative;
+  right: 13px;
+  text-align: center;
+}
+
+.big-navbar-toggler:hover a {
+  color: var(--lightgray);
+}
+
+.big-navbar-toggler > a {
+  color: var(--darkgray);
+  font-size: 24px;
+}
+
+.chat-search {
+}
+
+.chat-search > input {
+  border-radius: 20px;
+  background-color: var(--gray2);
+  border: none;
+  height: 40px;
+  width: 97%;
+}
+
+.chat {
+  width: 97%;
+  height: 30%;
+  max-height: 70px;
+  border-radius: 20px;
+  background-color: var(--black);
+  overflow-wrap: break-word;
+}
+
+.chat-img {
+  width: 68px;
+  position: relative;
+}
+
+/* Картинка */
+.chat-img > img {
+  width: 48px;
+}
+
+.online-chat-list, .offline-chat-list {
+  left: 47px;
+  bottom: 0;
+}
+
+/* Имя и фамилия собеседников */
+.companion-info > h3 {
+  color: whitesmoke;
+  font-size: 93%;
+}
+
+/* Текст последнего сообщения */
+.companion-info > p {
+  color: var(--lightgray);
+  font-size: 90%;
+}
+
+/* Информация о чате */
+.chat-info {
+  height: 70px;
+}
+
+/* Время написания последнего сообщения */
+.time-last-message {
+  color: var(--darkgray);
+  font-size: 13px;
+}
+
+/* Количество непрочитанных сообщений */
+.unread-message > span {
+  display: inline-block;
+  width: 20px;
+  background-color: var(--blue);
+  border-radius: 25px;
+  color: whitesmoke;
+  font-size: 13px;
+}
+
+/* ========== Контент чата ========== */
+#chat-content {
+}
+
+.chat-header {
+  height: 6%;
+}
+
+.companion-header-img {
+  min-width: 40px;
+  max-width: 50px;
+}
+
+.companion-header-img > img {
+  width: 35px;
+}
+
+.online-chat-header, .offline-chat-header {
+  left: 37px;
+  bottom: -1px;
+}
+
+.companion-name {
+  font-size: 100%;
+  font-weight: 600;
+  color: whitesmoke;
+}
+
+.chat-messages {
+  height: 86%;
+}
+
+.message-input {
+  height: 8%;
+}
+
+/* ===== Оформление сообщений чата ===== */
+.fade-in {
+  opacity: 0;
+  animation: fade-in 0.3s forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.message-group-received {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.message-group-received > div:first-child {
+  margin-top: auto;
+  margin-right: 5px;
+}
+
+.message-group-received > div:last-child {
+  flex-grow: 1;
+}
+
+.message-group-received > div:first-child > img {
+  border-radius: 50%;
+  height: 25px;
+  width: 25px;
+}
+
+.message-received {
+  max-width: 60%;
+  word-break: break-word;
+  margin: 2px 0;
+  display: flex;
+}
+
+.message-received:first-child > .message-received-text {
+  border-top-left-radius: 20px;
+}
+
+.message-received:last-child > .message-received-text {
+  border-bottom-left-radius: 20px;
+}
+
+.message-received-text {
+  padding: 10px;
+  min-height: 20px;
+  background: #878787;
+  border-radius: 4px 20px 20px 4px;
+  text-align: left;
+}
+
+.message-group-sent {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.message-sent {
+  max-width: 60%;
+  word-break: break-word;
+  display: flex;
+  margin: 2px 0 2px auto;
+}
+
+.message-sent-text {
+  background: #0099ff;
+  border-radius: 20px 4px 4px 20px;
+  min-height: 20px;
+  padding: 10px;
+  margin-left: auto;
+  text-align: left;
+}
+
+.message-sent:first-child > .message-sent-text {
+  border-top-right-radius: 20px;
+}
+
+.message-sent:last-child > .message-sent-text {
+  border-bottom-right-radius: 20px;
+}
+
+.message-sent-status {
+  width: 15px;
+  display: flex;
+  margin-left: 5px;
+  font-size: 15px;
+  color: rgba(134, 142, 153, 0.5);
+}
+
+.message-sent-status > img {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-top: auto;
+}
+
+.message-sent-status > i {
+  margin-top: auto;
+}

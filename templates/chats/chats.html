@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load chats_custom_filters %}
+
+{% block title %}
+  {% if chat_content %}
+    {{ companion }}
+  {% else %}
+    Чаты
+  {% endif %}
+{% endblock title %}
+
+{% block links %}
+  <link rel="stylesheet" href="{% static 'chats/css/chats_styles.css' %}">
+{% endblock links %}
+
+{% block start_scripts %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+{% endblock start_scripts %}
+
+{% block end_scripts %}
+  {% if chat_content %}
+    {{ chat_uuid|json_script:"json-chat_uuid" }}
+    {{ current_user|json_script:"json-email" }}
+    {{ current_user.get_full_name|json_script:"json-current_user" }}
+    {{ user_photo.url|json_script:"json-user_icon" }}
+  {% endif %}
+  <script src="{% static 'chats/js/chats.js' %}"></script>
+  <script src="https://kit.fontawesome.com/e5fcab2af9.js" crossorigin="anonymous"></script>
+{% endblock end_scripts %}
+{#      <nav class="navbar flex-column col-1 d-none d-md-flex bg-black">#}
+{#        <div class="navbar-brand">#}
+{#          <img src="https://cdn2.iconfinder.com/data/icons/ios7-inspired-mac-icon-set/1024/messages_5122x.png"#}
+{#               alt="logo"#}
+{#               class="img-fluid align-text-top d-inline-block">#}
+{#        </div>#}
+{##}
+{#        <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>#}
+{#        <a href="#" class="nav-link"><i class="fa-regular fa-user"></i></a>#}
+{#        <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i></a>#}
+{#        <a href="#" class="nav-link"><i class="fa-solid fa-comment"></i></a>#}
+{#        <a href="{% url 'logout' %}" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i></a>#}
+{#      </nav>#}
+{% block content %}
+
+  <div class="container-fluid">
+    <div class="row main-row">
+
+      <nav class="navbar d-none d-sm-flex bg-black flex-column main-navbar">
+        {#          <a class="navbar-brand" href="#">Навбар</a>#}
+        <ul class="navbar-nav h-100 align-items-center justify-content-center">
+          <li class="nav-item">
+            <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><i class="fa-regular fa-user"></i></a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i></a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><i class="fa-solid fa-comment"></i></a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i></a>
+          </li>
+        </ul>
+      </nav>
+
+      <section id="chat-list" class="{% if chat_content %}d-none {% else %}col{% endif %} d-md-block col-md-5">
+        <div class="row mt-2 align-items-center">
+          <div class="col-11">
+            <h1 class="chats-title">Чаты</h1>
+          </div>
+          <div class="col-1">
+            <div class="big-navbar-toggler">
+              <a href="#"><i class="fa-solid fa-ellipsis-vertical"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="row chat-search">
+          <input type="text" placeholder="Поиск чатов" class="mx-auto">
+          <div class="mt-3 mb-2 line"></div>
+        </div>
+        <div class="row justify-content-center chat-box"> {# Все чаты #}
+          {% for chat, companion, companion_image, companion_online, last_chat_message, last_chat_message_time in chats %}
+            {#          <div class="chat" id="{{ companion }}" data-chat-uuid="{{ chat.uuid }}"></div>#}
+            <div id="chat-{{ chat.uuid }}" class="row my-1 align-items-center chat"> {# Отдельный чат #}
+              <div class="col-2 position-relative chat-img">
+                <img src="{{ companion_image.url }}" alt="" class="rounded-circle">
+                <div
+                  class="{% if companion_online %}online online-chat-list{% else %}offline offline-chat-list{% endif %}"></div>
+              </div>
+              <div class="col mt-2 companion-info">
+                <h3>{{ companion }}</h3>
+                <p>{{ last_chat_message|truncatechars:30 }}</p>
+              </div>
+              <div class="col-2 d-flex flex-column align-items-end justify-content-center chat-info">
+                <div class="time-last-message">{{ last_chat_message_time|time:"H:i" }}</div>
+                <div class="text-center my-1 unread-message">
+                  <span>4</span>
+                </div>
+                {# Непрочитанные сообщения #}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section id="chat-content"
+               class="{% if chat_content %}d-block{% else %}d-none d-md-block{% endif %} col bg-black">
+        {% if chat_content %}
+          <div class="row align-items-center chat-header">
+            <div class="col-1 mt-2 me-2 position-relative companion-header-img">
+              <img src="{{ companion_image.url }}" alt="" class="rounded-circle">
+              <div class="{% if companion_online %}online online-chat-header{% else %}offline offline-chat-header{% endif %}"></div>
+            </div>
+            <div class="col">
+              <div class="companion-name">{{ companion }}</div>
+            </div>
+            <div class="mt-2 line"></div>
+          </div>
+          <div class="row chat-messages">
+            <div class="col mt-3">
+              {% for message in messages %}
+                {% if current_user == message.sender.email %}
+                  {% with previous_el=messages|previous:forloop.counter0 %}
+                    {% if forloop.first or previous_el.sender.email != current_user %}
+                      <div class="message-group-sent">
+                    {% endif %}
+                  {% endwith %}
+                <div class="message-sent">
+                  <div class="message-sent-text">
+                    {{ message.message|safe }}
+                  </div>
+                </div>
+                {% with next_el=messages|next:forloop.counter0 %}
+                  {% if forloop.last or next_el.sender.email != current_user %}
+                    </div>
+                  {% endif %}
+                {% endwith %}
+                {% else %}
+                  {% with previous_el=messages|previous:forloop.counter0 %}
+                    {% if forloop.first or previous_el.sender.email == current_user or previous_el.sender.email != message.sender.email %}
+                      <div class="message-group-received">
+                      <div>
+                        <img src="{{ user_photo.url }}" alt=""/>
+                      </div>
+                      <div>
+                    {% endif %}
+                  {% endwith %}
+                <div class="message-received">
+                  <div class="message-received-text">
+                    {{ message.message }}
+                  </div>
+                </div>
+                {% with next_el=messages|next:forloop.counter0 %}
+                  {% if forloop.last or next_el.sender.email != message.sender.email or next_el.sender.email == current_user %}
+                    </div>
+                    </div>
+                  {% endif %}
+                {% endwith %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="row message-input">
+            <div class="col">
+
+            </div>
+          </div>
+        {% else %}
+          <div class="row h-100">
+            <div class="col-12 h-100 d-flex justify-content-center align-items-center">
+              <h2 style="color: var(--lightgray)"><<< Выберите Чат</h2>
+            </div>
+          </div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+{% endblock content %}
