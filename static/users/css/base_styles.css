@@ -4,4 +4,6 @@ html, body {
   width: 100%;
   max-width: 2000px;
   min-width: 300px;
+  /*min-height: 650px;*/
+  /*overflow: auto;*/
 }

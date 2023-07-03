@@ -114,6 +114,15 @@ def chats_view(request, chat_uuid=None):
 		companion = chat.members.exclude(id=request.user.id).first()
 		companion_image = companion.user_profiles.profile_image
 		companion_online = ConnectionHistory.objects.get_or_create(user_id=companion.id)[0].online_status
+		form = None
+
+		if request.method == 'POST':
+			form = MessageForm(request.POST)
+			if form.is_valid():
+				return redirect('chats:chat_detail', chat_uuid=chat_uuid)
+
+		if form is None:
+			form = MessageForm()
 
 		context = {
 			'messages': messages,
@@ -125,6 +134,8 @@ def chats_view(request, chat_uuid=None):
 			'chats': chats,
 			'chat_uuid': chat_uuid,
 			'chat_content': True,
+
+			'form': form,
 			}
 		return render(request, 'chats/chats.html', context)
 	else:

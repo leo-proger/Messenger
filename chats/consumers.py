@@ -73,7 +73,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def save_message(self, chat_uuid, email, message):
-		if message:
+		if any(s.isalpha() for s in message):
 			sender = User.objects.get(email=email)
 			chat = Chat.objects.get(uuid=chat_uuid)
 			Message.objects.create(chat=chat, sender=sender, message=message)

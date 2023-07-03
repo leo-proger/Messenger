@@ -1,11 +1,31 @@
 :root {
-  --darkgray: #5b5b5b;
+  --darkgray: #24272b;
   --lightgray: #b7b7b7;
-  --gray: #24272b;
+  --gray: #5b5b5b;
   --gray2: #495057;
+  --gray3: #222222;
   --black: #111112;
   --lightblack: #232325;
+  --white: #ececec;
   --blue: #1976d2;
+}
+
+/* Стили для линии прокрутки */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Стили для ползунка прокрутки */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Изменение цвета ползунка при наведении */
+::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
 }
 
 .main-row {
@@ -43,6 +63,8 @@
 .nav-link > i {
   color: var(--lightgray);
   font-size: 22px;
+
+  transition: color 0.2s ease-out;
 }
 
 .nav-link > i:hover {
@@ -51,13 +73,13 @@
 
 /* ========== Список чатов ========== */
 #chat-list {
-  background-color: var(--gray);
+  background-color: var(--darkgray);
   width: 38%;
   border-right: 2px solid var(--gray2);
 }
 
 .chats-title {
-  color: whitesmoke;
+  color: var(--white);
 }
 
 .big-navbar-toggler {
@@ -66,26 +88,42 @@
   position: relative;
   right: 13px;
   text-align: center;
+
+}
+
+.big-navbar-toggler > a {
+  color: var(--gray);
+  font-size: 24px;
+
+  transition: color 0.2s ease-out;
 }
 
 .big-navbar-toggler:hover a {
   color: var(--lightgray);
 }
 
-.big-navbar-toggler > a {
-  color: var(--darkgray);
-  font-size: 24px;
-}
-
 .chat-search {
-}
-
-.chat-search > input {
   border-radius: 20px;
   background-color: var(--gray2);
   border: none;
   height: 40px;
   width: 97%;
+
+  transition: background-color 0.2s ease-out;
+}
+
+.chat-search::placeholder {
+  color: var(--white);
+
+  transition: opacity 0.2s ease-out;
+}
+
+.chat-search:focus {
+  background-color: var(--white);
+}
+
+.chat-search:focus::placeholder {
+  opacity: 0;
 }
 
 .chat {
@@ -95,18 +133,30 @@
   border-radius: 20px;
   background-color: var(--black);
   overflow-wrap: break-word;
+
+  transition: transform 0.2s;
 }
 
+.chat:hover {
+  transform: scale(0.98);
+}
+
+.chat:active {
+  transform: scale(0.95);
+}
+
+/* Фото чатов */
 .chat-img {
   width: 68px;
   position: relative;
 }
 
-/* Картинка */
+/* Само фото */
 .chat-img > img {
   width: 48px;
 }
 
+/* Онлайн (Оффлайн) значок в списке чатов */
 .online-chat-list, .offline-chat-list {
   left: 47px;
   bottom: 0;
@@ -114,7 +164,7 @@
 
 /* Имя и фамилия собеседников */
 .companion-info > h3 {
-  color: whitesmoke;
+  color: var(--white);
   font-size: 93%;
 }
 
@@ -131,7 +181,7 @@
 
 /* Время написания последнего сообщения */
 .time-last-message {
-  color: var(--darkgray);
+  color: var(--gray);
   font-size: 13px;
 }
 
@@ -141,21 +191,17 @@
   width: 20px;
   background-color: var(--blue);
   border-radius: 25px;
-  color: whitesmoke;
+  color: var(--white);
   font-size: 13px;
 }
 
 /* ========== Контент чата ========== */
 #chat-content {
-}
-
-.chat-header {
-  height: 6%;
+  max-height: 100vh;
 }
 
 .companion-header-img {
-  min-width: 40px;
-  max-width: 50px;
+  width: 40px;
 }
 
 .companion-header-img > img {
@@ -170,15 +216,60 @@
 .companion-name {
   font-size: 100%;
   font-weight: 600;
-  color: whitesmoke;
+  color: var(--white);
 }
 
-.chat-messages {
-  height: 86%;
+#chat-messages {
+  overflow-y: auto;
+  height: calc(100% - 112px);
+}
+
+.message-input-container {
+  height: 59px;
+  border-top: 2px solid var(--gray2);
+  background-color: var(--gray3);
 }
 
 .message-input {
-  height: 8%;
+  width: 100%;
+  height: 38px;
+  resize: none;
+  border: none;
+  padding-right: 50px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: var(--lightgray);
+  outline: none;
+  transition: background-color 0.2s ease-out;
+}
+
+.message-input::placeholder {
+  transition: opacity 0.2s ease-out;
+}
+
+.message-input:focus::placeholder {
+  opacity: 0;
+}
+
+.send-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 38px;
+  width: 45px;
+  border: none;
+  font-size: 21px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #333;
+  color: #fff;
+  transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.send-button:hover {
+  background-color: var(--white);
+  color: rgb(0, 0, 0);
+  box-shadow: 0 0 15px 3px rgba(236, 236, 236, 0.5);
 }
 
 /* ===== Оформление сообщений чата ===== */

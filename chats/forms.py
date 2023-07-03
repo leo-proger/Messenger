@@ -13,7 +13,7 @@ class MessageForm(forms.ModelForm):
 	message = forms.CharField(widget=forms.Textarea(
 		attrs={
 			'placeholder': 'Напишите сообщение...',
-			'class': 'text-input',
+			'class': 'form-control message-input',
 			}
 		),
 		required=True)
