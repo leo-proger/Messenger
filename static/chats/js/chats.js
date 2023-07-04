@@ -1,13 +1,16 @@
 let chatSocket = null;
 
-const initialize = function (newChatUUID = null, newLastChatMessage = null) {
+const initialize = function (newChatUUID = null, newEmail = null, newLastChatMessage = null) {
 
     const chatUUID = newChatUUID !== null ? newChatUUID : JSON.parse(document.getElementById('json-chat_uuid').textContent);
 
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${chatUUID}/`);
 
-    const email = JSON.parse(document.getElementById('json-email').textContent);
-    const userIcon = JSON.parse(document.getElementById('json-user_icon').textContent);
+    const email = newEmail !== null ? newEmail : JSON.parse(document.getElementById('json-email').textContent);
+    const userPhotoElement = document.getElementById('json-user_icon');
+    const userPhoto = userPhotoElement !== null ? JSON.parse(userPhotoElement.textContent) : null;
+
+    // const userIcon = JSON.parse(document.getElementById('json-user_icon').textContent);
 
     const chatMessagesContainer = document.getElementById('chat-messages');
     let currentMessageGroup = null;
@@ -60,7 +63,7 @@ const initialize = function (newChatUUID = null, newLastChatMessage = null) {
                 const messagesContainer = document.createElement('div');
 
                 const imgElement = document.createElement('img');
-                imgElement.src = userIcon;
+                imgElement.src = userPhoto;
                 imgElement.alt = '';
 
                 imgContainer.appendChild(imgElement);
@@ -89,11 +92,11 @@ const initialize = function (newChatUUID = null, newLastChatMessage = null) {
     };
 
     chatSocket.onopen = function (event) {
-        // console.log('open');
+        console.log('open');
     };
 
     chatSocket.onclose = function (event) {
-        // console.log('close');
+        console.log('close');
     };
 
     document.querySelector('.send-button').onclick = function (event) {
@@ -175,7 +178,10 @@ $('.chat').on('click', function () {
                 chatSocket.close();
             }
 
-            initialize(chatUUID, newLastChatMessage);
+            const newEmail = JSON.parse($(response).filter('#json-email').text());
+            // const newUserIcon = JSON.parse(document.getElementById('json-user_icon').textContent);
+
+            initialize(chatUUID, newEmail, newLastChatMessage);
 
             scrollDown(document.getElementById('chat-messages'));
         },

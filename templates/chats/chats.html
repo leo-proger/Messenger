@@ -19,20 +19,25 @@
 {% endblock start_scripts %}
 
 {% block end_scripts %}
+  <script src="https://kit.fontawesome.com/e5fcab2af9.js" crossorigin="anonymous"></script>
+  <script src="{% static 'chats/js/chats.js' %}"></script>
+
   {% if chat_content %}
     {{ chat_uuid|json_script:"json-chat_uuid" }}
     {{ current_user|json_script:"json-email" }}
     {{ current_user.get_full_name|json_script:"json-current_user" }}
-    {{ user_photo.url|json_script:"json-user_icon" }}
+    {{ user_photo.url|json_script:"json-user_photo" }}
+    <script>
+      const chatUUIDElement = document.getElementById('json-chat_uuid');
+      if (chatUUIDElement !== null) {
+        const chatUUID = JSON.parse(chatUUIDElement.textContent);
+        initialize(chatUUID);
+      }
+    </script>
   {% endif %}
-  <script src="{% static 'chats/js/chats.js' %}"></script>
-  <script src="https://kit.fontawesome.com/e5fcab2af9.js" crossorigin="anonymous"></script>
-
-  <script>
-  initialize()
-</script>
 
 {% endblock end_scripts %}
+
 {#      <nav class="navbar flex-column col-1 d-none d-md-flex bg-black">#}
 {#        <div class="navbar-brand">#}
 {#          <img src="https://cdn2.iconfinder.com/data/icons/ios7-inspired-mac-icon-set/1024/messages_5122x.png"#}
@@ -118,6 +123,9 @@
                class="{% if chat_content %}d-block{% else %}d-none d-md-block{% endif %} col bg-black">
         {% if chat_content %}
           <div id="chat-header" class="row align-items-center">
+            <div class="col-1 d-block d-md-none mt-2 go-back-button">
+              <a href="{% url 'chats:chat_list' %}"><i class="fa-solid fa-arrow-left"></i></a>
+            </div>
             <div class="col-1 mt-2 me-2 position-relative companion-header-img">
               <img src="{{ companion_image.url }}" alt="" class="rounded-circle">
               <div
@@ -139,7 +147,7 @@
                   {% endwith %}
                 <div class="message-sent">
                   <div class="message-sent-text">
-                    {{ message.message|safe }}
+                    {{ message.message }}
                   </div>
                 </div>
                 {% with next_el=messages|next:forloop.counter0 %}

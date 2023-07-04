@@ -4,6 +4,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
+from django.shortcuts import get_object_or_404
 
 from users.consumers import OnlineStatusConsumer
 from .models import Chat, Message
@@ -73,7 +74,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def save_message(self, chat_uuid, email, message):
-		if any(s.isalpha() for s in message):
+		if message.split() != '':
 			sender = User.objects.get(email=email)
 			chat = Chat.objects.get(uuid=chat_uuid)
 			Message.objects.create(chat=chat, sender=sender, message=message)

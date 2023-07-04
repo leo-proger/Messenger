@@ -137,10 +137,9 @@ def chats_view(request, chat_uuid=None):
 
 			'form': form,
 			}
-		return render(request, 'chats/chats.html', context)
 	else:
 		context = {
 			'chats': chats,
 			'chat_content': False,
 			}
-		return render(request, 'chats/chats.html', context)
+	return render(request, 'chats/chats.html', context)
