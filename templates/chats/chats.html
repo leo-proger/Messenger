@@ -27,12 +27,13 @@
     {{ current_user|json_script:"json-email" }}
     {{ current_user.get_full_name|json_script:"json-current_user" }}
     {{ user_photo.url|json_script:"json-user_photo" }}
+
     <script>
-      const chatUUIDElement = document.getElementById('json-chat_uuid');
-      if (chatUUIDElement !== null) {
-        const chatUUID = JSON.parse(chatUUIDElement.textContent);
-        initialize(chatUUID);
-      }
+        const chatUUIDElement = document.getElementById('json-chat_uuid');
+        if (chatUUIDElement !== null) {
+            const chatUUID = JSON.parse(chatUUIDElement.textContent);
+            initialize(chatUUID);
+        }
     </script>
   {% endif %}
 

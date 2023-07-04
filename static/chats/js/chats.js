@@ -7,7 +7,7 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${chatUUID}/`);
 
     const email = newEmail !== null ? newEmail : JSON.parse(document.getElementById('json-email').textContent);
-    const userPhotoElement = document.getElementById('json-user_icon');
+    const userPhotoElement = document.getElementById('json-user_photo');
     const userPhoto = userPhotoElement !== null ? JSON.parse(userPhotoElement.textContent) : null;
 
     // const userIcon = JSON.parse(document.getElementById('json-user_icon').textContent);
