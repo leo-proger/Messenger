@@ -10,8 +10,6 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
     const userPhotoElement = document.getElementById('json-user_photo');
     const userPhoto = userPhotoElement !== null ? JSON.parse(userPhotoElement.textContent) : null;
 
-    // const userIcon = JSON.parse(document.getElementById('json-user_icon').textContent);
-
     const chatMessagesContainer = document.getElementById('chat-messages');
     let currentMessageGroup = null;
 
