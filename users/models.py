@@ -32,8 +32,8 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
 	email = models.EmailField(max_length=255, unique=True, verbose_name=_('Электронная почта'))
-	first_name = models.CharField(max_length=50, verbose_name=_('Имя'))
-	last_name = models.CharField(max_length=50, verbose_name=_('Фамилия'))
+	first_name = models.CharField(max_length=30, verbose_name=_('Имя'))
+	last_name = models.CharField(max_length=30, verbose_name=_('Фамилия'))
 
 	is_active = models.BooleanField(default=True)
 	is_staff = models.BooleanField(default=False)
@@ -55,7 +55,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 		verbose_name_plural = _('Пользователи')
 
 	def __str__(self):
-		return self.email
+		return f'{self.email} | {self.get_full_name()}'
 
 	def get_full_name(self):
 		full_name = f'{self.first_name} {self.last_name}'
@@ -63,17 +63,49 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_profiles')
+	user = models.OneToOneField(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.CASCADE,
+		related_name='user_profiles'
+		)
 	# При поиске будет не id пользователя, а username
-	username = models.CharField(max_length=50, unique=True, blank=True, null=True, verbose_name=_('Имя пользователя'))
+	username = models.CharField(
+		max_length=40,
+		unique=True,
+		blank=True,
+		null=True,
+		verbose_name=_('Имя пользователя')
+		)
 	profile_image = ResizedImageField(
-		size=[1024, 1024], crop=['middle', 'center'],
+		size=[1024, 1024],
+		crop=['middle', 'center'],
 		upload_to=get_image_path,
-		default='/users/images/user_profile_images/default_user_avatar.jpg', blank=True,
-		verbose_name=_('Фотография'))
-	biography = models.TextField(blank=True, null=True, verbose_name=_('Биография'))
-	phone_number = PhoneNumberField(unique=True, null=True, blank=True, verbose_name=_('Номер телефона'))
-	city = models.CharField(blank=True, null=True, verbose_name=_('Город'), max_length=168)
+		default='/users/images/user_profile_images/default_user_avatar.jpg',
+		blank=True,
+		verbose_name=_('Фотография')
+		)
+	age = models.PositiveSmallIntegerField(
+		null=True,
+		blank=True,
+		verbose_name=_('Возраст')
+		)
+	biography = models.TextField(
+		blank=True,
+		null=True,
+		verbose_name=_('Биография')
+		)
+	phone_number = PhoneNumberField(
+		unique=True,
+		null=True,
+		blank=True,
+		verbose_name=_('Номер телефона')
+		)
+	city = models.CharField(
+		blank=True,
+		null=True,
+		verbose_name=_('Город'),
+		max_length=168
+		)
 
 	class Meta:
 		verbose_name = _('Профиль пользователя')

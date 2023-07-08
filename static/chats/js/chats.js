@@ -1,14 +1,13 @@
 let chatSocket = null;
 
-const initialize = function (newChatUUID = null, newEmail = null, newLastChatMessage = null) {
+const initialize = function (newChatUUID = null, newEmail = null, newLastChatMessage = null, newCompanionPhoto = null) {
 
     const chatUUID = newChatUUID !== null ? newChatUUID : JSON.parse(document.getElementById('json-chat_uuid').textContent);
 
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${chatUUID}/`);
 
     const email = newEmail !== null ? newEmail : JSON.parse(document.getElementById('json-email').textContent);
-    const userPhotoElement = document.getElementById('json-user_photo');
-    const userPhoto = userPhotoElement !== null ? JSON.parse(userPhotoElement.textContent) : null;
+    const companionPhoto = newCompanionPhoto !== null ? newCompanionPhoto : JSON.parse(document.getElementById('json-companion_photo').textContent);
 
     const chatMessagesContainer = document.getElementById('chat-messages');
     let currentMessageGroup = null;
@@ -61,7 +60,7 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
                 const messagesContainer = document.createElement('div');
 
                 const imgElement = document.createElement('img');
-                imgElement.src = userPhoto;
+                imgElement.src = companionPhoto;
                 imgElement.alt = '';
 
                 imgContainer.appendChild(imgElement);
@@ -87,69 +86,128 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
             top: chatMessagesContainer.scrollHeight,
             behavior: 'smooth'
         });
+
+        const lastChatMessage = document.querySelector(`#companion-info-${chatUUID} > p`);
+        if (message.length > 30) {
+            lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message.substring(0, 30) + '...';
+        } else {
+            lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message;
+        }
+
+        const timeLastChatMessage = document.querySelector('.time-last-message');
+        timeLastChatMessage.textContent = getTimeNow();
     };
 
     chatSocket.onopen = function (event) {
-        console.log('open');
+        // console.log('open');
     };
 
     chatSocket.onclose = function (event) {
-        console.log('close');
+        // console.log('close');
     };
 
+    // Отправка сообщения по нажатию на кнопку
     document.querySelector('.send-button').onclick = function (event) {
         event.preventDefault();
 
         const messageInputDom = document.querySelector('.message-input');
         const message = messageInputDom.value;
 
-        if (message.split('').some(s => s.match(/[a-zA-Zа-яА-Я]/))) {
+        if (message.trim() !== '') {
             chatSocket.send(JSON.stringify({
                 'chat_uuid': chatUUID,
                 'email': email,
                 'message': message,
             }));
 
-            const lastChatMessage = document.querySelector(`#companion-info-${chatUUID} > p`);
-
-            if (message.length > 30) {
-                lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message.substring(0, 30) + '...';
-            } else {
-                lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message;
-            }
-
             messageInputDom.value = '';
         }
     };
 
-    // Поиск по чатам
-    const searchInput = document.querySelector('.chat-search');
-    searchInput.addEventListener('input', () => searchContact(searchInput.value));
+    // Отправка сообщения по нажатию на Enter
+    document.querySelector('.message-input').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            const messageInputDom = document.querySelector('.message-input');
+            const message = messageInputDom.value;
+
+            if (message.trim() !== '') {
+                chatSocket.send(JSON.stringify({
+                    'chat_uuid': chatUUID,
+                    'email': email,
+                    'message': message,
+                }));
+
+                messageInputDom.value = '';
+            }
+        }
+    });
+
 
     // Прокрутка окна сообщений вниз
     scrollDown(chatMessagesContainer)
 }
 
+// Поиск по чатам
+const searchInput = document.querySelector('.chat-search');
+searchInput.addEventListener('input', () => searchContact(searchInput.value));
+
 const chats = document.querySelectorAll('.chat');
-const companionNames = document.querySelectorAll('.companion-info > h3');
 
 function searchContact(value) {
-    chats.forEach((chat, index) => {
-        chat.classList.add('d-none');
-        const companionName = companionNames[index].textContent;
-        const [firstName, lastName] = companionName.split(' ');
+    const noResultsMessage = document.getElementById('no-results-message');
+    let hasResults = false;
 
-        if (
-            firstName.toLowerCase().startsWith(value.toLowerCase()) ||
-            lastName.toLowerCase().startsWith(value.toLowerCase())
-        ) {
-            chat.classList.remove('d-none');
+    chats.forEach((chat) => {
+        const companionName = chat.querySelector('.companion-info h3').textContent;
+        const isMatch = companionName.toLowerCase().includes(value.toLowerCase());
+
+        chat.classList.toggle('d-none', !isMatch);
+
+        if (isMatch) {
+            hasResults = true;
         }
     });
+
+    noResultsMessage.classList.toggle('d-none', hasResults);
 }
+
 
 function scrollDown(tag) {
     tag.scrollTop = tag.scrollHeight;
+}
+
+
+function getTimeNow() {
+    const currentDate = new Date();
+    let hours = currentDate.getHours();
+    let minutes = currentDate.getMinutes();
+
+    // При необходимости отформатируйте часы и минуты с ведущими нулями
+    if (hours < 10) {
+        hours = "0" + hours;
+    }
+    if (minutes < 10) {
+        minutes = "0" + minutes;
+    }
+
+    return hours + ":" + minutes;
+}
+
+function markMessagesAsRead(chatUUID) {
+    const markAsReadUrl = `/inbox/notifications/mark-all-as-read/`;
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', markAsReadUrl, true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const chatElement = document.getElementById(chatUUID).querySelector('.unread-messages-count');
+            if (chatElement !== null) {
+                chatElement.remove();
+            }
+        }
+    };
+    xhr.send();
 }
 
 // Обработчик клика на элемент .chat
@@ -168,22 +226,25 @@ $('.chat').on('click', function () {
             const newURL = `/chats/${chatUUID}/`;
             history.pushState(null, null, newURL);
 
-            const newLastChatMessage = $(parsedHTML).find(`#companion-info-${chatUUID} > p`)[1];
-
-            // Переключить WebSocket-соединение на новый чат
             if (chatSocket !== null) {
                 // Закрыть предыдущее WebSocket-соединение, если оно существует
                 chatSocket.close();
             }
 
             const newEmail = JSON.parse($(response).filter('#json-email').text());
-            // const newUserIcon = JSON.parse(document.getElementById('json-user_icon').textContent);
+            const newLastChatMessage = $(parsedHTML).find(`#companion-info-${chatUUID} > p`)[1];
+            const newCompanionPhoto = JSON.parse($(response).filter('#json-companion_photo').text());
 
-            initialize(chatUUID, newEmail, newLastChatMessage);
+            initialize(chatUUID, newEmail, newLastChatMessage, newCompanionPhoto);
 
             scrollDown(document.getElementById('chat-messages'));
+            markMessagesAsRead(chatUUID);
+
+            const chatUUIDJSONElement = document.getElementById('json-chat_uuid')
+            chatUUIDJSONElement.textContent = JSON.stringify(chatUUID);
         },
         error: function () {
         }
     });
 });
+

@@ -22,7 +22,7 @@ class CustomUserAdmin(admin.ModelAdmin):
 	profile_link.short_description = 'Profile'
 	profile_link.admin_order_field = 'user_profile__id'
 
-	list_display = ('email', 'first_name', 'last_name', 'profile_link', 'chat_list')
+	list_display = ('email', 'get_full_name', 'profile_link', 'chat_list')
 	readonly_fields = ('profile_link',)
 
 	ordering = ('email',)

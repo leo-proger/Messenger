@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
-from datetime import timedelta
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,9 +42,9 @@ INSTALLED_APPS = [
 	'users.apps.UsersConfig',
 	'chats.apps.ChatsConfig',
 
-	'crispy_forms',
 	'phonenumber_field',
 	'django_resized',
+	'notifications',
 
 	'channels',
 	'channels_redis',
@@ -120,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

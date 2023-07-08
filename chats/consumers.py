@@ -5,6 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 from django.shortcuts import get_object_or_404
+from notifications.signals import notify
 
 from users.consumers import OnlineStatusConsumer
 from .models import Chat, Message
@@ -48,17 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			chat_uuid,
 			email,
 			message,
-			)
-
-		await self.channel_layer.group_send(
-			self.room_group_name,
-			# Этот словарь идет как параметр event в метод chat_message
-			{
-				'type': 'chat_message',
-				'sender': email,
-				'full_name': full_name,
-				'message': message,
-				}
+			full_name,
 			)
 
 	# Эта функция отправляет сообщение и в js принять ее функцией Socket.onmessage
@@ -73,8 +64,59 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			}))
 
 	@database_sync_to_async
-	def save_message(self, chat_uuid, email, message):
-		if message.split() != '':
+	def save_message(self, chat_uuid, email, message, full_name):
+		if message.split():
 			sender = User.objects.get(email=email)
 			chat = Chat.objects.get(uuid=chat_uuid)
-			Message.objects.create(chat=chat, sender=sender, message=message)
+			receiver = chat.members.exclude(id=self.scope['user'].id).first()
+			Message.objects.create(chat=chat, sender=sender, receiver=receiver, message=message.strip())
+
+			async_to_sync(self.channel_layer.group_send)(
+				self.room_group_name,
+				# Этот словарь идет как параметр event в метод chat_message
+				{
+					'type': 'chat_message',
+					'sender': email,
+					'full_name': full_name,
+					'message': message,
+					}
+				)
+
+
+class NotificationConsumer(AsyncWebsocketConsumer):
+	def __init__(self, *args, **kwargs):
+		super().__init__(args, kwargs)
+		self.room_group_name = None
+
+	async def connect(self):
+		self.room_group_name = f"message_notifications_{self.scope['url_route']['kwargs']['user_id']}"
+		await self.channel_layer.group_add(
+			self.room_group_name,
+			self.channel_name
+			)
+		await self.accept()
+
+	async def disconnect(self, close_code):
+		await self.channel_layer.group_discard(
+			self.room_group_name,
+			self.channel_name
+			)
+
+	async def receive(self, text_data=None, **kwargs):
+		pass
+
+	async def send_notification(self, event):
+		recipient = await database_sync_to_async(User.objects.get)(email=event['recipient'])
+
+		chat_uuid = event['chat_uuid']
+		chat = await database_sync_to_async(Chat.objects.get)(uuid=chat_uuid)
+		last_chat_message = event['last_chat_message']
+
+		verb = event['verb']
+
+		await sync_to_async(notify.send)(sender=self.scope['user'], recipient=recipient, target=chat, verb=verb)
+		await self.send(text_data=json.dumps({
+			'type': 'new_message',
+			'chat_uuid': chat_uuid,
+			'last_chat_message': last_chat_message,
+			}))

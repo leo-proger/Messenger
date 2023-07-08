@@ -145,6 +145,10 @@
   transform: scale(0.95);
 }
 
+.active-chat {
+  background-color: var(--gray3);
+}
+
 /* Фото чатов */
 .chat-img {
   width: 68px;
@@ -186,13 +190,15 @@
 }
 
 /* Количество непрочитанных сообщений */
-.unread-message > span {
+.unread-messages-count > span {
   display: inline-block;
   width: 20px;
   background-color: var(--blue);
   border-radius: 25px;
   color: var(--white);
   font-size: 13px;
+
+  transition: opacity 0.3s ease-out;
 }
 
 /* ========== Контент чата ========== */

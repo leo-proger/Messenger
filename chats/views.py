@@ -1,9 +1,11 @@
 import json
 
 from django.contrib.auth import get_user_model
+from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DeleteView
+from notifications.models import Notification
 
 # from users.views import check_online
 from .forms import MessageForm, ChatCreateForm
@@ -57,7 +59,7 @@ class ChatCreateView(CreateView):
 
 	def get_form_kwargs(self):
 		kwargs = super().get_form_kwargs()
-		kwargs['user'] = self.request.user
+		kwargs['user'] = self.request.user.email
 		return kwargs
 
 	def form_valid(self, form):
@@ -67,8 +69,8 @@ class ChatCreateView(CreateView):
 		# if existing_chat:
 		# 	return redirect('chats:chat_detail', chat_uuid=existing_chat.uuid)
 		# else:
-		chat = Chat.objects.create(created_by=self.request.user)
-		chat.members.add(self.request.user, companion)
+		chat = Chat.objects.create(created_by=self.request.user.email)
+		chat.members.add(self.request.user.email, companion)
 		return redirect('chats:chat_detail', chat_uuid=chat.uuid)
 
 
@@ -96,22 +98,28 @@ def chats_view(request, chat_uuid=None):
 		companion = chat.members.exclude(pk=request.user.pk).first()
 		companion_image = UserProfile.objects.get(user=companion).profile_image
 		companion_online = ConnectionHistory.objects.get_or_create(user_id=companion.id)[0].online_status
-		last_chat_message = Message.objects.filter(chat=chat).last()
-		last_chat_message_time = last_chat_message.created_at if last_chat_message else ''
+		last_chat_message = msg if (msg := Message.objects.filter(chat=chat).last()) else ''
+		last_chat_message_time = last_chat_message.created_at
+		unread_count = Notification.objects.filter(recipient=request.user, target_object_id=chat.id,
+		                                           unread=True).count()
+		# unread_count = Message.objects.filter(chat=chat, is_read=False).count()
 		chats.append((
 			chat,
 			companion.get_full_name(),
 			companion_image,
 			companion_online,
-			last_chat_message.message if last_chat_message else '',
+			last_chat_message.message,
 			last_chat_message_time,
+			unread_count,
 			))
+
+	chats = sorted(chats, key=lambda x: x[5], reverse=True)
 	# ----
 
 	if chat_uuid:
 		chat = Chat.objects.get(uuid=chat_uuid)
 		messages = Message.objects.filter(chat=chat)
-		companion = chat.members.exclude(id=request.user.id).first()
+		companion = chat.members.exclude(pk=request.user.pk).first()
 		companion_image = companion.user_profiles.profile_image
 		companion_online = ConnectionHistory.objects.get_or_create(user_id=companion.id)[0].online_status
 		form = None
@@ -123,6 +131,8 @@ def chats_view(request, chat_uuid=None):
 
 		if form is None:
 			form = MessageForm()
+
+		Notification.objects.filter(recipient=request.user, target_object_id=chat.id).mark_all_as_read()
 
 		context = {
 			'messages': messages,
