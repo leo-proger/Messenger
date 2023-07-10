@@ -16,6 +16,9 @@
   {% block start_scripts %}{% endblock start_scripts %}
 </head>
 <body>
+
+{{ current_user_image.url|json_script:"json-current_user_image" }} {# TODO: В navbar снизу профиль текущего пользователя #}
+
 {#{% if request.user.is_authenticated %}#}
 {#  <nav class="navbar navbar-expand-sm navbar-light bg-light">#}
 {#  <ul class="navbar-nav">#}
@@ -66,6 +69,7 @@
 {#{% endif %}#}
 
 {% block content %}{% endblock content %}
+
 {% block end_scripts %}{% endblock end_scripts %}
 
 <script src="{% static 'chats/js/message_notifications.js' %}"></script>

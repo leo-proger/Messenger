@@ -78,7 +78,7 @@ TEMPLATES = [
 				'django.contrib.auth.context_processors.auth',
 				'django.contrib.messages.context_processors.messages',
 
-				'users.context_processors.user_photo',
+				'users.context_processors.current_user_image',
 				'users.context_processors.current_user_email',
 				'users.context_processors.current_user_id',
 				'users.context_processors.current_user_full_name',

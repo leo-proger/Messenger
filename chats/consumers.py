@@ -63,9 +63,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		if message.split():
 			sender = self.scope['user']
 			chat = Chat.objects.get(uuid=chat_uuid)
-			receiver = chat.members.exclude(id=sender.id).first()
+			recipient = chat.members.exclude(id=sender.id).first()
 
-			Message.objects.create(chat=chat, sender=sender, receiver=receiver, message=message.strip())
+			Message.objects.create(chat=chat, sender=sender, recipient=recipient, message=message.strip())
 
 			async_to_sync(self.channel_layer.group_send)(
 				self.room_group_name,

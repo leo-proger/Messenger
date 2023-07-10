@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-def user_photo(request):
+def current_user_image(request):
 	if request.user.is_authenticated:
 		icon = request.user.user_profiles.profile_image
 		return {'user_photo': icon}

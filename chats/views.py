@@ -27,14 +27,14 @@ class ChatCreateView(CreateView):
 		return kwargs
 
 	def form_valid(self, form):
-		companion = form.cleaned_data['companion']
-		# existing_chat = Chat.objects.filter(members=companion).distinct().first()
+		recipient = form.cleaned_data['recipient']
+		# existing_chat = Chat.objects.filter(members=recipient).distinct().first()
 
 		# if existing_chat:
 		# 	return redirect('chats:chat_detail', chat_uuid=existing_chat.uuid)
 		# else:
 		chat = Chat.objects.create(created_by=self.request.user.email)
-		chat.members.add(self.request.user.email, companion)
+		chat.members.add(self.request.user.email, recipient)
 		return redirect('chats:chat_detail', chat_uuid=chat.uuid)
 
 
@@ -59,18 +59,18 @@ def chats_view(request, chat_uuid=None):
 	chats = []
 
 	for chat in chat_list:
-		companion = chat.members.exclude(pk=request.user.pk).first()
-		companion_image = UserProfile.objects.get(user=companion).profile_image
-		companion_online = ConnectionHistory.objects.get_or_create(user_id=companion.id)[0].online_status
+		recipient = chat.members.exclude(pk=request.user.pk).first()
+		recipient_image = UserProfile.objects.get(user=recipient).profile_image
+		recipient_online = ConnectionHistory.objects.get_or_create(user_id=recipient.id)[0].online_status
 		last_chat_message = msg if (msg := Message.objects.filter(chat=chat).last()) else ''
 		last_chat_message_time = last_chat_message.created_at
 		unread_count = Notification.objects.filter(recipient=request.user, target_object_id=chat.id,
 		                                           unread=True).count()
 		chats.append((
 			chat,
-			companion.get_full_name(),
-			companion_image,
-			companion_online,
+			recipient.get_full_name(),
+			recipient_image,
+			recipient_online,
 			last_chat_message.message,
 			last_chat_message_time,
 			unread_count,
@@ -82,9 +82,9 @@ def chats_view(request, chat_uuid=None):
 	if chat_uuid:
 		chat = Chat.objects.get(uuid=chat_uuid)
 		messages = Message.objects.filter(chat=chat)
-		companion = chat.members.exclude(pk=request.user.pk).first()
-		companion_image = companion.user_profiles.profile_image
-		companion_online = ConnectionHistory.objects.get_or_create(user_id=companion.id)[0].online_status
+		recipient = chat.members.exclude(pk=request.user.pk).first()
+		recipient_image = recipient.user_profiles.profile_image
+		recipient_online = ConnectionHistory.objects.get_or_create(user_id=recipient.id)[0].online_status
 		form = None
 
 		if request.method == 'POST':
@@ -99,9 +99,9 @@ def chats_view(request, chat_uuid=None):
 
 		context = {
 			'messages': messages,
-			'companion': companion.get_full_name(),
-			'companion_image': companion_image,
-			'companion_online': companion_online,
+			'recipient': recipient.get_full_name(),
+			'recipient_image': recipient_image,
+			'recipient_online': recipient_online,
 			'current_user': request.user.email,
 
 			'chats': chats,

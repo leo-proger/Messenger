@@ -1,97 +1,42 @@
 let chatSocket = null;
 
-const initialize = function (newChatUUID = null, newEmail = null, newLastChatMessage = null, newCompanionPhoto = null) {
-
-    const chatUUID = newChatUUID !== null ? newChatUUID : JSON.parse(document.getElementById('json-chat_uuid').textContent);
-
+const initialize = function (newChatUUID = null, newEmail = null, newLastChatMessage = null, newRecipientImage = null) {
+    const chatUUID = newChatUUID || JSON.parse(document.getElementById('json-chat_uuid').textContent);
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${chatUUID}/`);
 
-    const email = newEmail !== null ? newEmail : JSON.parse(document.getElementById('json-email').textContent);
-    const companionPhoto = newCompanionPhoto !== null ? newCompanionPhoto : JSON.parse(document.getElementById('json-companion_photo').textContent);
+    const email = newEmail || JSON.parse(document.getElementById('json-email').textContent);
+    const recipientImage = newRecipientImage || JSON.parse(document.getElementById('json-recipient_image').textContent);
 
     const chatMessagesContainer = document.getElementById('chat-messages');
     let currentMessageGroup = null;
 
     chatSocket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        const message = data.message;
-        const sender = data.sender;
+        const {message, sender} = data;
 
         if (sender === email) {
-            const messageSentContainer = document.createElement('div');
-            messageSentContainer.classList.add('message-sent');
-
-            const messageSentText = document.createElement('div');
-            messageSentText.classList.add('message-sent-text');
-            messageSentText.textContent = message;
-
+            const messageSentContainer = createMessageSentContainer(message);
             if (!currentMessageGroup || currentMessageGroup.classList.contains('message-group-received')) {
-                currentMessageGroup = document.createElement('div');
-                currentMessageGroup.classList.add('message-group-sent');
+                currentMessageGroup = createMessageGroupSent();
                 document.querySelector('#chat-messages > div').appendChild(currentMessageGroup);
             }
 
-            messageSentContainer.appendChild(messageSentText);
             currentMessageGroup.appendChild(messageSentContainer);
-
-            const sentMessages = currentMessageGroup.getElementsByClassName('message-sent');
-            if (sentMessages.length > 1) {
-                const lastSentMessage = sentMessages[sentMessages.length - 1];
-                lastSentMessage.classList.add('fade-in');
-            }
+            fadeInLastSentMessage(currentMessageGroup);
         } else {
             if (currentMessageGroup && currentMessageGroup.classList.contains('message-group-received')) {
                 const messagesContainer = currentMessageGroup.lastChild;
-
-                const messageReceivedContainer = document.createElement('div');
-                messageReceivedContainer.classList.add('message-received', 'fade-in');
-
-                const messageReceivedText = document.createElement('div');
-                messageReceivedText.classList.add('message-received-text');
-                messageReceivedText.textContent = message;
-
-                messageReceivedContainer.appendChild(messageReceivedText);
+                const messageReceivedContainer = createMessageReceivedContainer(message);
                 messagesContainer.appendChild(messageReceivedContainer);
             } else {
-                currentMessageGroup = document.createElement('div');
-                currentMessageGroup.classList.add('message-group-received');
-
-                const imgContainer = document.createElement('div');
-                const messagesContainer = document.createElement('div');
-
-                const imgElement = document.createElement('img');
-                imgElement.src = companionPhoto;
-                imgElement.alt = '';
-
-                imgContainer.appendChild(imgElement);
-
-                const messageReceivedContainer = document.createElement('div');
-                messageReceivedContainer.classList.add('message-received', 'fade-in');
-
-                const messageReceivedText = document.createElement('div');
-                messageReceivedText.classList.add('message-received-text');
-                messageReceivedText.textContent = message;
-
-                messageReceivedContainer.appendChild(messageReceivedText);
-                messagesContainer.appendChild(messageReceivedContainer);
-
-                currentMessageGroup.appendChild(imgContainer);
-                currentMessageGroup.appendChild(messagesContainer);
-
+                currentMessageGroup = createMessageGroupReceived(recipientImage, message);
                 document.querySelector('#chat-messages > div').appendChild(currentMessageGroup);
             }
         }
 
-        chatMessagesContainer.scrollTo({
-            top: chatMessagesContainer.scrollHeight,
-            behavior: 'smooth'
-        });
-
-        const lastChatMessage = document.querySelector(`#companion-info-${chatUUID} > p`);
-        lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message
-
-        const timeLastChatMessage = document.querySelector('.time-last-message');
-        timeLastChatMessage.textContent = getTimeNow();
+        scrollDown(chatMessagesContainer);
+        updateLastChatMessage(chatUUID, newLastChatMessage || message);
+        updateTimeLastChatMessage();
 
         prependChat(chatUUID);
     };
@@ -108,7 +53,7 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
     document.querySelector('.send-button').onclick = function (event) {
         sendMessage(event, chatUUID);
         prependChat(chatUUID);
-    }
+    };
 
     // Отправка сообщения по нажатию на Enter
     document.querySelector('.message-input').addEventListener('keydown', (event) => {
@@ -116,11 +61,83 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
             sendMessage(event, chatUUID);
             prependChat(chatUUID);
         }
-
     });
 
     // Прокрутка окна сообщений вниз
-    scrollDown(chatMessagesContainer)
+    scrollDown(chatMessagesContainer);
+};
+
+function createMessageSentContainer(message) {
+    const messageSentContainer = document.createElement('div');
+    messageSentContainer.classList.add('message-sent');
+
+    const messageSentText = document.createElement('div');
+    messageSentText.classList.add('message-sent-text');
+    messageSentText.textContent = message;
+
+    messageSentContainer.appendChild(messageSentText);
+
+    return messageSentContainer;
+}
+
+function createMessageGroupSent() {
+    const messageGroupSent = document.createElement('div');
+    messageGroupSent.classList.add('message-group-sent');
+
+    return messageGroupSent;
+}
+
+function createMessageReceivedContainer(message) {
+    const messageReceivedContainer = document.createElement('div');
+    messageReceivedContainer.classList.add('message-received', 'fade-in');
+
+    const messageReceivedText = document.createElement('div');
+    messageReceivedText.classList.add('message-received-text');
+    messageReceivedText.textContent = message;
+
+    messageReceivedContainer.appendChild(messageReceivedText);
+
+    return messageReceivedContainer;
+}
+
+function createMessageGroupReceived(recipientImage, message) {
+    const messageGroupReceived = document.createElement('div');
+    messageGroupReceived.classList.add('message-group-received');
+
+    const imgContainer = document.createElement('div');
+    const messagesContainer = document.createElement('div');
+
+    const imgElement = document.createElement('img');
+    imgElement.src = recipientImage;
+    imgElement.alt = '';
+
+    imgContainer.appendChild(imgElement);
+
+    const messageReceivedContainer = createMessageReceivedContainer(message);
+    messagesContainer.appendChild(messageReceivedContainer);
+
+    messageGroupReceived.appendChild(imgContainer);
+    messageGroupReceived.appendChild(messagesContainer);
+
+    return messageGroupReceived;
+}
+
+function fadeInLastSentMessage(currentMessageGroup) {
+    const sentMessages = currentMessageGroup.getElementsByClassName('message-sent');
+    if (sentMessages.length > 1) {
+        const lastSentMessage = sentMessages[sentMessages.length - 1];
+        lastSentMessage.classList.add('fade-in');
+    }
+}
+
+function updateLastChatMessage(chatUUID, message) {
+    const lastChatMessage = document.querySelector(`#recipient-info-${chatUUID} > p`);
+    lastChatMessage.textContent = message;
+}
+
+function updateTimeLastChatMessage() {
+    const timeLastChatMessage = document.querySelector('.time-last-message');
+    timeLastChatMessage.textContent = getTimeNow();
 }
 
 function sendMessage(event, chatUUID) {
@@ -141,8 +158,9 @@ function sendMessage(event, chatUUID) {
 function prependChat(chatUUID) {
     const chatBox = document.getElementById('chat-box');
     const chat = document.getElementById(chatUUID);
-    chatBox.prepend(chat);
+    chatBox.insertAdjacentElement('afterbegin', chat);
 }
+
 
 // Поиск по чатам
 const searchInput = document.querySelector('.chat-search');
@@ -155,8 +173,8 @@ function searchContact(value) {
     let hasResults = false;
 
     chats.forEach((chat) => {
-        const companionName = chat.querySelector('.companion-info h3').textContent;
-        const isMatch = companionName.toLowerCase().includes(value.toLowerCase());
+        const recipientName = chat.querySelector('.recipient-info h3').textContent;
+        const isMatch = recipientName.toLowerCase().includes(value.toLowerCase());
 
         chat.classList.toggle('d-none', !isMatch);
 
@@ -168,11 +186,12 @@ function searchContact(value) {
     noResultsMessage.classList.toggle('d-none', hasResults);
 }
 
-
 function scrollDown(tag) {
-    tag.scrollTop = tag.scrollHeight;
+    tag.scrollTo({
+        top: tag.scrollHeight,
+        behavior: 'smooth'
+    });
 }
-
 
 function getTimeNow() {
     const currentDate = new Date();
@@ -227,10 +246,10 @@ $('.chat').on('click', function () {
             }
 
             const newEmail = JSON.parse($(response).filter('#json-email').text());
-            const newLastChatMessage = $(parsedHTML).find(`#companion-info-${chatUUID} > p`)[1];
-            const newCompanionPhoto = JSON.parse($(response).filter('#json-companion_photo').text());
+            const newLastChatMessage = $(parsedHTML).find(`#recipient-info-${chatUUID} > p`)[1];
+            const newRecipientImage = JSON.parse($(response).filter('#json-recipient_image').text());
 
-            initialize(chatUUID, newEmail, newLastChatMessage, newCompanionPhoto);
+            initialize(chatUUID, newEmail, newLastChatMessage, newRecipientImage);
 
             scrollDown(document.getElementById('chat-messages'));
             markMessagesAsRead(chatUUID);
@@ -239,9 +258,13 @@ $('.chat').on('click', function () {
             if (chatUUIDJSONElement !== null) {
                 chatUUIDJSONElement.textContent = JSON.stringify(chatUUID);
             }
+
+            const chatList = document.getElementById('chat-list');
+            chatList.className = 'd-none d-md-block col-md-5';
+
+            $('#chat-content').removeClass().addClass('d-block col bg-black');
         },
         error: function () {
         }
     });
 });
-

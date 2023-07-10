@@ -11,11 +11,11 @@ def new_message_notification(sender, instance, created, **kwargs):
 	if created:
 		channel_layer = get_channel_layer()
 		async_to_sync(channel_layer.group_send)(
-			f'message_notifications_{instance.receiver.id}',
+			f'message_notifications_{instance.recipient.id}',
 			{
 				'type': 'send_notification',
 				'actor': instance.sender.email,
-				'recipient': instance.receiver.email,
+				'recipient': instance.recipient.email,
 				'chat_uuid': str(instance.chat.uuid),
 				'verb': 'received a new message',
 				'last_chat_message': instance.message,

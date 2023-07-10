@@ -24,7 +24,7 @@ class MessageForm(forms.ModelForm):
 
 
 class ChatCreateForm(forms.ModelForm):
-	companion = forms.ModelChoiceField(
+	recipient = forms.ModelChoiceField(
 		queryset=None,
 		label='Собеседник',
 		widget=forms.Select(attrs={'class': 'form-control', 'style': 'width: 300px;'}),
@@ -37,14 +37,14 @@ class ChatCreateForm(forms.ModelForm):
 		users = User.objects.exclude(id=user.id).annotate(
 			full_name=Concat('first_name', Value(' '), 'last_name')
 			)
-		self.fields['companion'].queryset = users
-		self.fields['companion'].label_from_instance = lambda obj: obj.full_name
+		self.fields['recipient'].queryset = users
+		self.fields['recipient'].label_from_instance = lambda obj: obj.full_name
 
 	class Meta:
 		model = Chat
-		fields = ('companion',)
+		fields = ('recipient',)
 		error_messages = {
-			'companion': {
+			'recipient': {
 				'required': 'Выберите собеседника',
 				}
 			}

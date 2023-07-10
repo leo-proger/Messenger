@@ -30,7 +30,7 @@ NotifySocket.onmessage = function (event) {
             chatInfoElement.appendChild(unreadMessagesCountElement);
         }
 
-        const lastChatMessageElement = chat.querySelector('.companion-info > p')
+        const lastChatMessageElement = chat.querySelector('.recipient-info > p')
         lastChatMessageElement.textContent = lastChatMessage;
 
         const timeLastChatMessage = chat?.querySelector('.time-last-message');

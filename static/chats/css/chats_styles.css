@@ -166,20 +166,20 @@
   bottom: 0;
 }
 
-.companion-info {
+.recipient-info {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 /* Имя и фамилия собеседников */
-.companion-info > h3 {
+.recipient-info > h3 {
   color: var(--white);
   font-size: 93%;
 }
 
 /* Текст последнего сообщения */
-.companion-info > p {
+.recipient-info > p {
   color: var(--lightgray);
   font-size: 90%;
 }
@@ -213,19 +213,19 @@
 }
 
 /* ===== Кнопка назад ===== */
-.go-back-button {
+#go-back-button {
   transition: transform 0.2s ease-out, color 0.2s ease-out;
 }
 
-.go-back-button:hover {
-  transform: scale(1.20);
+#go-back-button:hover {
+  transform: scale(1.10);
 }
 
-.go-back-button:hover > a > i {
+#go-back-button:hover > a > i {
   color: var(--white)
 }
 
-.go-back-button > a > i {
+#go-back-button > a > i {
   font-size: 23px;
   background: none;
   color: var(--lightgray);
@@ -234,11 +234,11 @@
 /* ===== ===== */
 
 /* ===== Фото собеседника в шапке чата ===== */
-.companion-header-img {
+.recipient-header-img {
   width: 40px;
 }
 
-.companion-header-img > img {
+.recipient-header-img > img {
   width: 35px;
 }
 
@@ -249,7 +249,7 @@
   bottom: -1px;
 }
 
-.companion-name {
+.recipient-name {
   font-size: 100%;
   font-weight: 600;
   color: var(--white);
