@@ -88,14 +88,12 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
         });
 
         const lastChatMessage = document.querySelector(`#companion-info-${chatUUID} > p`);
-        if (message.length > 30) {
-            lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message.substring(0, 30) + '...';
-        } else {
-            lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message;
-        }
+        lastChatMessage.textContent = newLastChatMessage !== null ? newLastChatMessage : message
 
         const timeLastChatMessage = document.querySelector('.time-last-message');
         timeLastChatMessage.textContent = getTimeNow();
+
+        prependChat(chatUUID);
     };
 
     chatSocket.onopen = function (event) {
@@ -108,45 +106,42 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
 
     // Отправка сообщения по нажатию на кнопку
     document.querySelector('.send-button').onclick = function (event) {
-        event.preventDefault();
-
-        const messageInputDom = document.querySelector('.message-input');
-        const message = messageInputDom.value;
-
-        if (message.trim() !== '') {
-            chatSocket.send(JSON.stringify({
-                'chat_uuid': chatUUID,
-                'email': email,
-                'message': message,
-            }));
-
-            messageInputDom.value = '';
-        }
-    };
+        sendMessage(event, chatUUID);
+        prependChat(chatUUID);
+    }
 
     // Отправка сообщения по нажатию на Enter
-    document.querySelector('.message-input').addEventListener('keydown', function (event) {
+    document.querySelector('.message-input').addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
-            event.preventDefault();
-
-            const messageInputDom = document.querySelector('.message-input');
-            const message = messageInputDom.value;
-
-            if (message.trim() !== '') {
-                chatSocket.send(JSON.stringify({
-                    'chat_uuid': chatUUID,
-                    'email': email,
-                    'message': message,
-                }));
-
-                messageInputDom.value = '';
-            }
+            sendMessage(event, chatUUID);
+            prependChat(chatUUID);
         }
-    });
 
+    });
 
     // Прокрутка окна сообщений вниз
     scrollDown(chatMessagesContainer)
+}
+
+function sendMessage(event, chatUUID) {
+    event.preventDefault();
+
+    const messageInputDom = document.querySelector('.message-input');
+    const message = messageInputDom.value;
+
+    if (message.trim() !== '') {
+        chatSocket.send(JSON.stringify({
+            'chat_uuid': chatUUID,
+            'message': message,
+        }));
+        messageInputDom.value = '';
+    }
+}
+
+function prependChat(chatUUID) {
+    const chatBox = document.getElementById('chat-box');
+    const chat = document.getElementById(chatUUID);
+    chatBox.prepend(chat);
 }
 
 // Поиск по чатам
@@ -240,8 +235,10 @@ $('.chat').on('click', function () {
             scrollDown(document.getElementById('chat-messages'));
             markMessagesAsRead(chatUUID);
 
-            const chatUUIDJSONElement = document.getElementById('json-chat_uuid')
-            chatUUIDJSONElement.textContent = JSON.stringify(chatUUID);
+            const chatUUIDJSONElement = document.getElementById('json-chat_uuid');
+            if (chatUUIDJSONElement !== null) {
+                chatUUIDJSONElement.textContent = JSON.stringify(chatUUID);
+            }
         },
         error: function () {
         }

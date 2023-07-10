@@ -82,7 +82,7 @@
   color: var(--white);
 }
 
-.big-navbar-toggler {
+.chat-actions-icon {
   width: 20px;
   height: 40px;
   position: relative;
@@ -91,14 +91,14 @@
 
 }
 
-.big-navbar-toggler > a {
+.chat-actions-icon > a {
   color: var(--gray);
   font-size: 24px;
 
   transition: color 0.2s ease-out;
 }
 
-.big-navbar-toggler:hover a {
+.chat-actions-icon:hover a {
   color: var(--lightgray);
 }
 
@@ -164,6 +164,12 @@
 .online-chat-list, .offline-chat-list {
   left: 47px;
   bottom: 0;
+}
+
+.companion-info {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Имя и фамилия собеседников */

@@ -33,13 +33,13 @@ NotifySocket.onmessage = function (event) {
         const lastChatMessageElement = chat.querySelector('.companion-info > p')
         lastChatMessageElement.textContent = lastChatMessage;
 
-        const chatBox = document.getElementById('chat-box');
+        const timeLastChatMessage = chat?.querySelector('.time-last-message');
+        timeLastChatMessage.textContent = getTimeNow();
 
-        chatBox.prepend(chat);
+        prependChat(chatUUID);
 
     }
 };
 
 NotifySocket.onclose = function (event) {
-
 };

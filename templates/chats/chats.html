@@ -22,9 +22,9 @@
 {% block end_scripts %}
   <script src="https://kit.fontawesome.com/e5fcab2af9.js" crossorigin="anonymous"></script>
 
-  {{ request.user.id|json_script:"json-user_id" }}
-  {{ current_user|json_script:"json-email" }}
-  {{ current_user.get_full_name|json_script:"json-current_user" }}
+  {{ current_user_id|json_script:"json-user_id" }}
+  {{ current_user_email|json_script:"json-email" }}
+  {{ current_user_full_name|json_script:"json-current_user" }}
   {{ user_photo.url|json_script:"json-user_photo" }}
 
   <script src="{% static 'chats/js/chats.js' %}"></script>
@@ -44,7 +44,7 @@
     </script>
   {% endif %}
 
-  <script src="{% static 'chats/js/message_notifications.js' %}"></script>
+
 
 
 {% endblock end_scripts %}
@@ -69,7 +69,6 @@
     <div class="row main-row">
 
       <nav class="navbar d-none d-sm-flex bg-black flex-column main-navbar">
-        {#          <a class="navbar-brand" href="#">Навбар</a>#}
         <ul class="navbar-nav h-100 align-items-center justify-content-center">
           <li class="nav-item">
             <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>
@@ -95,8 +94,8 @@
             <h1 class="chats-title">Чаты</h1>
           </div>
           <div class="col-1">
-            <div class="big-navbar-toggler">
-              {# TODO: Вылезает окошко на весь экран с описанием функций, которые есть в navbar #}
+            <div class="chat-actions-icon">
+              {# TODO: Вылезают разные функции (отметить все как прочитанное и тд) #}
               <a href="#"><i class="fa-solid fa-ellipsis-vertical"></i></a>
             </div>
           </div>
@@ -107,7 +106,6 @@
         </div>
         <div id="chat-box" class="row justify-content-center"> {# Все чаты #}
           {% for chat, companion, companion_image, companion_online, last_chat_message, last_chat_message_time, unread_messages_count in chats %}
-            {#          <div class="chat" id="{{ companion }}" data-chat-uuid="{{ chat.uuid }}"></div>#}
             <div id="{{ chat.uuid }}" class="row my-1 align-items-center chat" data-chat-uuid="{{ chat.uuid }}"
                  data-chat-id="{{ chat.id }}">
               {# Отдельный чат #}
@@ -118,12 +116,12 @@
                 </div>
               </div>
               <div id="companion-info-{{ chat.uuid }}" class="col mt-2 companion-info">
-                <h3>{{ companion }}</h3>
+                <h3 title="{{ companion }}">{{ companion }}</h3>
                 <p>{{ last_chat_message }}</p>
               </div>
               <div class="col-2 d-flex flex-column align-items-end justify-content-center chat-info">
                 <div class="time-last-message">{{ last_chat_message_time|time:"H:i" }}</div>
-                {% if unread_messages_count and not chat_content %}
+                {% if unread_messages_count %}
                   <div class="text-center my-1 unread-messages-count">
                     {% if unread_messages_count > 99 %}
                       <span>...</span>

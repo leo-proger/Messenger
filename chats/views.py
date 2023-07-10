@@ -15,42 +15,6 @@ from users.models import UserProfile, ConnectionHistory
 User = get_user_model()
 
 
-# @never_cache
-# def chat_detail(request, chat_uuid):
-# 	chat = get_object_or_404(Chat, uuid=chat_uuid)
-# 	messages = Message.objects.filter(chat=chat)
-# 	# companion = chat.members.exclude(id=request.user.id).first()
-# 	current_user = request.user
-# 	# companion_connection_history = ConnectionHistory.objects.get_or_create(user=companion)[0]
-# 	# companion_online = companion_connection_history.online_status
-#
-# 	user = request.user
-# 	chats = Chat.objects.filter(members=user)
-# 	chats_and_companions = []
-# 	for chat in chats:
-# 		companions = chat.members.exclude(pk=user.pk)
-# 		chats_and_companions.append((chat, companions))
-#
-# 	if request.method == 'POST':
-# 		form = MessageForm(request.POST)
-# 		if form.is_valid():
-# 			return redirect('chats:chat_detail', chat_uuid=chat_uuid)
-# 	else:
-# 		form = MessageForm()
-#
-# 	context = {
-# 		'form': form,
-# 		'chat_uuid': chat_uuid,
-# 		'messages': messages,
-# 		# 'companion': companion.get_full_name(),
-# 		# 'companion_id': companion.id,
-# 		# 'companion_online': companion_online,
-# 		'current_user': current_user.email,
-# 		'current_user_full_name': current_user.get_full_name(),
-# 		'chats': chats_and_companions
-# 		}
-# 	return render(request, 'chats/chat_detail.html', context)
-
 class ChatCreateView(CreateView):
 	model = Chat
 	template_name = 'chats/create_chat.html'
@@ -102,7 +66,6 @@ def chats_view(request, chat_uuid=None):
 		last_chat_message_time = last_chat_message.created_at
 		unread_count = Notification.objects.filter(recipient=request.user, target_object_id=chat.id,
 		                                           unread=True).count()
-		# unread_count = Message.objects.filter(chat=chat, is_read=False).count()
 		chats.append((
 			chat,
 			companion.get_full_name(),

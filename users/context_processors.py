@@ -10,7 +10,19 @@ def user_photo(request):
 	return ''
 
 
-def current_user(request):
+def current_user_email(request):
 	if request.user.is_authenticated:
-		return {'current_user': request.user.email}
+		return {'current_user_email': request.user.email}
+	return ''
+
+
+def current_user_id(request):
+	if request.user.is_authenticated:
+		return {'current_user_id': request.user.id}
+	return ''
+
+
+def current_user_full_name(request):
+	if request.user.is_authenticated:
+		return {'current_user_full_name': request.user.get_full_name()}
 	return ''

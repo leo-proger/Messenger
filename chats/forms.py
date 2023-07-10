@@ -48,4 +48,3 @@ class ChatCreateForm(forms.ModelForm):
 				'required': 'Выберите собеседника',
 				}
 			}
-
