@@ -131,7 +131,7 @@ function fadeInLastSentMessage(currentMessageGroup) {
 }
 
 function updateLastChatMessage(chatUUID, message) {
-    const lastChatMessage = document.querySelector(`#recipient-info-${chatUUID} > p`);
+    const lastChatMessage = document.querySelector(`#chat-info-${chatUUID} > p`);
     lastChatMessage.textContent = message;
 }
 
@@ -155,10 +155,27 @@ function sendMessage(event, chatUUID) {
     }
 }
 
+
+// TODO: Разобраться с анимацией
 function prependChat(chatUUID) {
-    const chatBox = document.getElementById('chat-box');
-    const chat = document.getElementById(chatUUID);
+  const chatBox = document.getElementById('chat-box');
+  const chat = document.getElementById(chatUUID);
+
+  if (!isChatAtTop()) {
     chatBox.insertAdjacentElement('afterbegin', chat);
+    chat.classList.add('chat');
+  } else {
+    chatBox.insertAdjacentElement('afterbegin', chat);
+  }
+}
+
+function isChatAtTop() {
+  const chatBox = document.getElementById('chat-box');
+  const chat = chatBox.querySelector('.chat');
+  if (chat) {
+    return chat === chatBox.firstElementChild;
+  }
+  return false;
 }
 
 
@@ -173,7 +190,7 @@ function searchContact(value) {
     let hasResults = false;
 
     chats.forEach((chat) => {
-        const recipientName = chat.querySelector('.recipient-info h3').textContent;
+        const recipientName = chat.querySelector('.message-info h3').textContent;
         const isMatch = recipientName.toLowerCase().includes(value.toLowerCase());
 
         chat.classList.toggle('d-none', !isMatch);
@@ -246,7 +263,7 @@ $('.chat').on('click', function () {
             }
 
             const newEmail = JSON.parse($(response).filter('#json-email').text());
-            const newLastChatMessage = $(parsedHTML).find(`#recipient-info-${chatUUID} > p`)[1];
+            const newLastChatMessage = $(parsedHTML).find(`#chat-info-${chatUUID} > p`)[1];
             const newRecipientImage = JSON.parse($(response).filter('#json-recipient_image').text());
 
             initialize(chatUUID, newEmail, newLastChatMessage, newRecipientImage);

@@ -22,7 +22,7 @@
 {% block end_scripts %}
   <script src="https://kit.fontawesome.com/e5fcab2af9.js" crossorigin="anonymous"></script>
 
-  {{ current_user_id|json_script:"json-user_id" }}
+  {{ current_user_id|json_script:"json-current_user_id" }}
   {{ current_user_email|json_script:"json-email" }}
   {{ current_user_full_name|json_script:"json-current_user" }}
 
@@ -101,17 +101,17 @@
             <div id="{{ chat.uuid }}" class="row my-1 align-items-center chat" data-chat-uuid="{{ chat.uuid }}"
                  data-chat-id="{{ chat.id }}">
               {# Отдельный чат #}
-              <div class="col-2 position-relative chat-img">
+              <div class="col-2 position-relative chat-image">
                 <img src="{{ recipient_image.url }}" alt="" class="rounded-circle">
                 <div
                   class="{% if recipient_online %}online online-chat-list{% else %}offline offline-chat-list{% endif %}">
                 </div>
               </div>
-              <div id="recipient-info-{{ chat.uuid }}" class="col mt-2 recipient-info">
+              <div id="chat-info-{{ chat.uuid }}" class="col mt-2 chat-info"> {# recipient-info #}
                 <h3 title="{{ recipient }}">{{ recipient }}</h3>
                 <p>{{ last_chat_message }}</p>
               </div>
-              <div class="col-2 d-flex flex-column align-items-end justify-content-center chat-info">
+              <div class="col-2 d-flex flex-column align-items-end justify-content-center message-info"> {# chat-info #}
                 <div class="time-last-message">{{ last_chat_message_time|time:"H:i" }}</div>
                 {% if unread_messages_count %}
                   <div class="text-center my-1 unread-messages-count">

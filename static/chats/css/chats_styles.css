@@ -126,6 +126,15 @@
   opacity: 0;
 }
 
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 .chat {
   width: 97%;
   height: 30%;
@@ -135,6 +144,7 @@
   overflow-wrap: break-word;
 
   transition: transform 0.2s;
+  animation: slideIn 0.5s;
 }
 
 .chat:hover {
@@ -150,13 +160,13 @@
 }
 
 /* Фото чатов */
-.chat-img {
+.chat-image {
   width: 68px;
   position: relative;
 }
 
 /* Само фото */
-.chat-img > img {
+.chat-image > img {
   width: 48px;
 }
 
@@ -166,26 +176,26 @@
   bottom: 0;
 }
 
-.recipient-info {
+.chat-info {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 /* Имя и фамилия собеседников */
-.recipient-info > h3 {
+.chat-info > h3 {
   color: var(--white);
   font-size: 93%;
 }
 
 /* Текст последнего сообщения */
-.recipient-info > p {
+.chat-info > p {
   color: var(--lightgray);
   font-size: 90%;
 }
 
 /* Информация о чате */
-.chat-info {
+.message-info {
   height: 70px;
 }
 
