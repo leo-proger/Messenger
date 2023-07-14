@@ -4,8 +4,8 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
     const chatUUID = newChatUUID || JSON.parse(document.getElementById('json-chat_uuid').textContent);
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${chatUUID}/`);
 
-    const email = newEmail || JSON.parse(document.getElementById('json-email').textContent);
-    const recipientImage = newRecipientImage || JSON.parse(document.getElementById('json-recipient_image').textContent);
+    email = newEmail === null ? email : newEmail;
+    recipientImage = newRecipientImage === null ? recipientImage : newRecipientImage;
 
     const chatMessagesContainer = document.getElementById('chat-messages');
     let currentMessageGroup = null;
@@ -52,14 +52,12 @@ const initialize = function (newChatUUID = null, newEmail = null, newLastChatMes
     // Отправка сообщения по нажатию на кнопку
     document.querySelector('.send-button').onclick = function (event) {
         sendMessage(event, chatUUID);
-        prependChat(chatUUID);
     };
 
     // Отправка сообщения по нажатию на Enter
     document.querySelector('.message-input').addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             sendMessage(event, chatUUID);
-            prependChat(chatUUID);
         }
     });
 
@@ -152,30 +150,15 @@ function sendMessage(event, chatUUID) {
             'message': message,
         }));
         messageInputDom.value = '';
+        prependChat(chatUUID);
     }
 }
 
-
-// TODO: Разобраться с анимацией
+// TODO: Разобраться тут с анимацией
 function prependChat(chatUUID) {
-  const chatBox = document.getElementById('chat-box');
-  const chat = document.getElementById(chatUUID);
-
-  if (!isChatAtTop()) {
-    chatBox.insertAdjacentElement('afterbegin', chat);
-    chat.classList.add('chat');
-  } else {
-    chatBox.insertAdjacentElement('afterbegin', chat);
-  }
-}
-
-function isChatAtTop() {
-  const chatBox = document.getElementById('chat-box');
-  const chat = chatBox.querySelector('.chat');
-  if (chat) {
-    return chat === chatBox.firstElementChild;
-  }
-  return false;
+    const chatBox = document.getElementById('chat-box');
+    const chat = document.getElementById(chatUUID);
+    chatBox.prepend(chat);
 }
 
 
@@ -183,25 +166,27 @@ function isChatAtTop() {
 const searchInput = document.querySelector('.chat-search');
 searchInput.addEventListener('input', () => searchContact(searchInput.value));
 
-const chats = document.querySelectorAll('.chat');
+const chats = $('.chat');
+const noResultsMessage = $('#no-results-message');
 
 function searchContact(value) {
-    const noResultsMessage = document.getElementById('no-results-message');
     let hasResults = false;
 
-    chats.forEach((chat) => {
-        const recipientName = chat.querySelector('.message-info h3').textContent;
+    chats.each(function () {
+        const recipientName = $(this).find('.chat-info h3').text();
         const isMatch = recipientName.toLowerCase().includes(value.toLowerCase());
 
-        chat.classList.toggle('d-none', !isMatch);
-
         if (isMatch) {
+            $(this).slideDown();
             hasResults = true;
+        } else {
+            $(this).slideUp();
         }
     });
 
-    noResultsMessage.classList.toggle('d-none', hasResults);
+    noResultsMessage.toggleClass('d-none', hasResults);
 }
+
 
 function scrollDown(tag) {
     tag.scrollTo({
@@ -242,31 +227,28 @@ function markMessagesAsRead(chatUUID) {
 }
 
 // Обработчик клика на элемент .chat
-$('.chat').on('click', function () {
+$(`.chat`).on('click', function () {
     const chatUUID = $(this).data('chat-uuid');
+    const chatContent = $('#chat-content');
+    const chatList = $('#chat-list');
 
     $.ajax({
         url: `/chats/${chatUUID}/`,
         method: 'GET',
-        success: function (response) {
+        success: (response) => {
             const parsedHTML = $.parseHTML(response);
-            const chatContent = $(parsedHTML).find('#chat-content').html();
-            $('#chat-content').html(chatContent);
-            document.title = $(parsedHTML).find('title').text();
+            const $parsedHTML = $(parsedHTML);
+            chatContent.html($parsedHTML.find('#chat-content').html());
+            document.title = $parsedHTML.find('title').text();
 
-            const newURL = `/chats/${chatUUID}/`;
-            history.pushState(null, null, newURL);
+            history.pushState(null, null, `/chats/${chatUUID}/`);
 
             if (chatSocket !== null) {
-                // Закрыть предыдущее WebSocket-соединение, если оно существует
                 chatSocket.close();
             }
 
-            const newEmail = JSON.parse($(response).filter('#json-email').text());
-            const newLastChatMessage = $(parsedHTML).find(`#chat-info-${chatUUID} > p`)[1];
-            const newRecipientImage = JSON.parse($(response).filter('#json-recipient_image').text());
-
-            initialize(chatUUID, newEmail, newLastChatMessage, newRecipientImage);
+            const newLastChatMessage = $parsedHTML.find(`#chat-info-${chatUUID} > p`)[1];
+            initialize(chatUUID, email, newLastChatMessage, recipientImage);
 
             scrollDown(document.getElementById('chat-messages'));
             markMessagesAsRead(chatUUID);
@@ -276,12 +258,11 @@ $('.chat').on('click', function () {
                 chatUUIDJSONElement.textContent = JSON.stringify(chatUUID);
             }
 
-            const chatList = document.getElementById('chat-list');
             chatList.className = 'd-none d-md-block col-md-5';
-
-            $('#chat-content').removeClass().addClass('d-block col bg-black');
+            chatContent.removeClass().addClass('d-block col bg-black');
         },
-        error: function () {
+        error: () => {
         }
     });
 });
+

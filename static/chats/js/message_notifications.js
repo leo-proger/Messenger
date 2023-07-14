@@ -1,6 +1,4 @@
-const userID = JSON.parse(document.getElementById('json-current_user_id').textContent);
-
-const NotifySocket = new WebSocket(`ws://${window.location.host}/ws/message-notifications/${userID}/`);
+const NotifySocket = new WebSocket(`ws://${window.location.host}/ws/message-notifications/${currentUserID}/`);
 
 NotifySocket.onopen = function () {
     console.log('open')

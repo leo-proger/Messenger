@@ -38,19 +38,18 @@
   border-top: 2px solid var(--gray2);
 }
 
-.online {
+.online, .offline {
   position: absolute;
   width: 10px;
   height: 10px;
   border-radius: 50%;
+}
+
+.online {
   background-color: lightgreen;
 }
 
 .offline {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
   background-color: var(--lightgray);
 }
 
@@ -102,6 +101,7 @@
   color: var(--lightgray);
 }
 
+/* ===== Форма поиска чатов ===== */
 .chat-search {
   border-radius: 20px;
   background-color: var(--gray2);
@@ -126,15 +126,9 @@
   opacity: 0;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
+/* ===== ===== */
 
+/* ===== Чат в списке чатов ===== */
 .chat {
   width: 97%;
   height: 30%;
@@ -143,8 +137,7 @@
   background-color: var(--black);
   overflow-wrap: break-word;
 
-  transition: transform 0.2s;
-  animation: slideIn 0.5s;
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
 }
 
 .chat:hover {
@@ -154,6 +147,8 @@
 .chat:active {
   transform: scale(0.95);
 }
+
+/* ===== ===== */
 
 .active-chat {
   background-color: var(--gray3);
@@ -171,7 +166,7 @@
 }
 
 /* Онлайн (Оффлайн) значок в списке чатов */
-.online-chat-list, .offline-chat-list {
+.online-status-chat-list {
   left: 47px;
   bottom: 0;
 }
@@ -254,7 +249,7 @@
 
 /* ===== =====*/
 
-.online-chat-header, .offline-chat-header {
+.online-status-chat-header {
   left: 37px;
   bottom: -1px;
 }

@@ -68,7 +68,7 @@ def chats_view(request, chat_uuid=None):
 		                                           unread=True).count()
 		chats.append((
 			chat,
-			recipient.get_full_name(),
+			recipient,
 			recipient_image,
 			recipient_online,
 			last_chat_message.message,
@@ -99,7 +99,7 @@ def chats_view(request, chat_uuid=None):
 
 		context = {
 			'messages': messages,
-			'recipient': recipient.get_full_name(),
+			'recipient': recipient,
 			'recipient_image': recipient_image,
 			'recipient_online': recipient_online,
 			'current_user': request.user.email,

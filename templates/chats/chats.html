@@ -5,7 +5,7 @@
 
 {% block title %}
   {% if chat_content %}
-    {{ recipient }}
+    {{ recipient.get_full_name }}
   {% else %}
     Чаты
   {% endif %}
@@ -21,24 +21,17 @@
 
 {% block end_scripts %}
   <script src="https://kit.fontawesome.com/e5fcab2af9.js" crossorigin="anonymous"></script>
-
-  {{ current_user_id|json_script:"json-current_user_id" }}
-  {{ current_user_email|json_script:"json-email" }}
-  {{ current_user_full_name|json_script:"json-current_user" }}
-
   <script src="{% static 'chats/js/chats.js' %}"></script>
 
   {% if chat_content %}
-    {{ chat_uuid|json_script:"json-chat_uuid" }}
-    {{ recipient_image.url|json_script:"json-recipient_image" }}
-
     <script>
-        const chatUUIDElement = JSON.parse(document.getElementById('json-chat_uuid').textContent);
-        initialize(chatUUIDElement);
+        const chatUUID = '{{ chat_uuid|escapejs }}';
+        let recipientImage = '{{ recipient_image.url|escapejs }}'
+
+        initialize(chatUUID);
         scrollDown(document.getElementById('chat-messages'));
     </script>
   {% endif %}
-
 {% endblock end_scripts %}
 
 {#      <nav class="navbar flex-column col-1 d-none d-md-flex bg-black">#}
@@ -103,12 +96,13 @@
               {# Отдельный чат #}
               <div class="col-2 position-relative chat-image">
                 <img src="{{ recipient_image.url }}" alt="" class="rounded-circle">
-                <div
-                  class="{% if recipient_online %}online online-chat-list{% else %}offline offline-chat-list{% endif %}">
+                <div class="online-status-{{ recipient.id }}">
+                  <div
+                    class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-list"></div>
                 </div>
               </div>
               <div id="chat-info-{{ chat.uuid }}" class="col mt-2 chat-info"> {# recipient-info #}
-                <h3 title="{{ recipient }}">{{ recipient }}</h3>
+                <h3 title="{{ recipient.get_full_name }}">{{ recipient.get_full_name }}</h3>
                 <p>{{ last_chat_message }}</p>
               </div>
               <div class="col-2 d-flex flex-column align-items-end justify-content-center message-info"> {# chat-info #}
@@ -140,11 +134,13 @@
             </div>
             <div class="col-1 mt-2 me-2 position-relative recipient-header-img">
               <img src="{{ recipient_image.url }}" alt="" class="rounded-circle">
-              <div
-                class="{% if recipient_online %}online online-chat-header{% else %}offline offline-chat-header{% endif %}"></div>
+              <div class="online-status-{{ recipient.id }}">
+                <div
+                  class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-header"></div>
+              </div>
             </div>
             <div class="col">
-              <div class="recipient-name">{{ recipient }}</div>
+              <div class="recipient-name">{{ recipient.get_full_name }}</div>
             </div>
             <div class="mt-2 line"></div>
           </div>

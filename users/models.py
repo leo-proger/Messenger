@@ -133,6 +133,6 @@ class ConnectionHistory(models.Model):
 		self.last_online = timezone.now()
 		self.save(update_fields=['last_online'])
 
-	def update_status(self, online_status):
+	def update_online_status(self, online_status: bool):
 		self.online_status = online_status
 		self.save(update_fields=['online_status'])

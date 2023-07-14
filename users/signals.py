@@ -12,14 +12,14 @@ from asgiref.sync import async_to_sync
 def send_online_status(sender, instance, created, **kwargs):
 	if not created:
 		channel_layer = get_channel_layer()
-		user = instance.user.email
+		user_id = instance.user.id
 		online_status = instance.online_status
 
 		async_to_sync(channel_layer.group_send)(
-			'online_users',
+			f'online_users',
 			{
 				'type': 'send_online_status',
-				'user': user,
+				'user_id': user_id,
 				'online_status': online_status,
 				}
 			)

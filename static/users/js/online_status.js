@@ -1,13 +1,27 @@
-const user_email = JSON.parse(document.getElementById('json-email').textContent);
-
 const socket = new WebSocket(`ws://${window.location.host}/ws/online/`);
 
 socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
-    if (data.user !== user_email) {
-        const online_status = data.online_status;
-        const onlineStatusElement = document.querySelector('.online-status');
-        onlineStatusElement.textContent = online_status ? 'Online' : 'Offline';
+    const receivedUserID = data.user_id;
+    const userOnlineStatus = data.online_status;
+
+    if (receivedUserID !== currentUserID) {
+        const onlineStatus = document.querySelectorAll(`.online-status-${receivedUserID}`);
+        const onlineStatusChatList = onlineStatus[0].querySelector('.online-status-chat-list');
+        const onlineStatusChatHeader = onlineStatus[1].querySelector('.online-status-chat-header')
+        console.log(onlineStatusChatHeader)
+
+        if (userOnlineStatus) {
+            if (onlineStatusChatHeader) {
+                onlineStatusChatHeader.className = 'online online-status-chat-header';
+            }
+            onlineStatusChatList.className = 'online online-status-chat-list';
+        } else {
+            if (onlineStatusChatHeader) {
+                onlineStatusChatHeader.className = 'offline online-status-chat-header';
+            }
+            onlineStatusChatList.className = 'offline online-status-chat-list';
+        }
     }
 }
 
@@ -15,7 +29,7 @@ socket.onopen = function (event) {
     console.log('Connect to Online')
     socket.send(JSON.stringify({
         'online_status': true,
-        'user': user_email,
+        'user_id': currentUserID,
     }))
 }
 
@@ -26,6 +40,6 @@ socket.onclose = function (event) {
 window.addEventListener('beforeunload', function (event) {
     socket.send(JSON.stringify({
         'online_status': false,
-        'user': user_email
+        'user_id': currentUserID,
     }))
 })
