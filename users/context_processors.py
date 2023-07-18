@@ -10,12 +10,6 @@ def current_user_image(request):
 	return ''
 
 
-def current_user_email(request):
-	if request.user.is_authenticated:
-		return {'current_user_email': request.user.email}
-	return ''
-
-
 def current_user_id(request):
 	if request.user.is_authenticated:
 		return {'current_user_id': request.user.id}

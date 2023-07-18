@@ -1,20 +1,20 @@
 let chatSocket = null;
 
-const initialize = function (newChatUUID = null, newEmail = null, newLastChatMessage = null, newRecipientImage = null) {
+const initialize = function (newChatUUID = null, newLastChatMessage = null, newRecipientImage = null) {
+    scrollDown(document.getElementById('chat-messages'))
     const chatUUID = newChatUUID || JSON.parse(document.getElementById('json-chat_uuid').textContent);
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${chatUUID}/`);
 
-    email = newEmail === null ? email : newEmail;
-    recipientImage = newRecipientImage === null ? recipientImage : newRecipientImage;
+    const recipientImage = newRecipientImage || document.querySelector('.recipient-header-image > img').getAttribute('src');
 
     const chatMessagesContainer = document.getElementById('chat-messages');
     let currentMessageGroup = null;
 
     chatSocket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        const {message, sender} = data;
+        const {message, sender_id: senderID} = data;
 
-        if (sender === email) {
+        if (senderID === currentUserID) {
             const messageSentContainer = createMessageSentContainer(message);
             if (!currentMessageGroup || currentMessageGroup.classList.contains('message-group-received')) {
                 currentMessageGroup = createMessageGroupSent();
@@ -161,7 +161,6 @@ function prependChat(chatUUID) {
     chatBox.prepend(chat);
 }
 
-
 // Поиск по чатам
 const searchInput = document.querySelector('.chat-search');
 searchInput.addEventListener('input', () => searchContact(searchInput.value));
@@ -228,37 +227,39 @@ function markMessagesAsRead(chatUUID) {
 
 // Обработчик клика на элемент .chat
 $(`.chat`).on('click', function () {
-    const chatUUID = $(this).data('chat-uuid');
+    const selectedChatUUID = $(this).data('chat-uuid');
     const chatContent = $('#chat-content');
     const chatList = $('#chat-list');
 
     $.ajax({
-        url: `/chats/${chatUUID}/`,
+        url: `/chats/${selectedChatUUID}/`,
         method: 'GET',
         success: (response) => {
             const parsedHTML = $.parseHTML(response);
             const $parsedHTML = $(parsedHTML);
+
             chatContent.html($parsedHTML.find('#chat-content').html());
             document.title = $parsedHTML.find('title').text();
 
-            history.pushState(null, null, `/chats/${chatUUID}/`);
+            history.pushState(null, null, `/chats/${selectedChatUUID}/`);
 
             if (chatSocket !== null) {
                 chatSocket.close();
             }
 
-            const newLastChatMessage = $parsedHTML.find(`#chat-info-${chatUUID} > p`)[1];
-            initialize(chatUUID, email, newLastChatMessage, recipientImage);
+            const newLastChatMessage = $parsedHTML.find(`#chat-info-${selectedChatUUID} > p`)[1];
+            const newRecipientImage = $parsedHTML.find('.recipient-header-image > img').attr('src');
 
-            scrollDown(document.getElementById('chat-messages'));
-            markMessagesAsRead(chatUUID);
+            initialize(selectedChatUUID, newLastChatMessage, newRecipientImage);
 
-            const chatUUIDJSONElement = document.getElementById('json-chat_uuid');
-            if (chatUUIDJSONElement !== null) {
-                chatUUIDJSONElement.textContent = JSON.stringify(chatUUID);
-            }
+            chatUUID = selectedChatUUID;
 
-            chatList.className = 'd-none d-md-block col-md-5';
+            // TODO: При нажатии на маленьких экранах на чат, не прокручиваются вниз сообщения
+            // scrollDown($parsedHTML.find('#chat-messages'));
+
+            markMessagesAsRead(selectedChatUUID);
+
+            chatList.removeClass().addClass('d-none d-md-block col-md-5');
             chatContent.removeClass().addClass('d-block col bg-black');
         },
         error: () => {

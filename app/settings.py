@@ -48,6 +48,8 @@ INSTALLED_APPS = [
 
 	'channels',
 	'channels_redis',
+
+	'sslserver',
 	]
 
 MIDDLEWARE = [
@@ -62,7 +64,6 @@ MIDDLEWARE = [
 	'users.middleware.AuthMiddleware',
 	'users.middleware.SuperuserCheckMiddleware',
 	]
-
 ROOT_URLCONF = 'app.urls'
 
 TEMPLATES = [
@@ -79,7 +80,6 @@ TEMPLATES = [
 				'django.contrib.messages.context_processors.messages',
 
 				'users.context_processors.current_user_image',
-				'users.context_processors.current_user_email',
 				'users.context_processors.current_user_id',
 				'users.context_processors.current_user_full_name',
 				],

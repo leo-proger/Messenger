@@ -25,8 +25,7 @@
 
   {% if chat_content %}
     <script>
-        const chatUUID = '{{ chat_uuid|escapejs }}';
-        let recipientImage = '{{ recipient_image.url|escapejs }}'
+        let chatUUID = '{{ chat_uuid|escapejs }}';
 
         initialize(chatUUID);
         scrollDown(document.getElementById('chat-messages'));
@@ -95,7 +94,7 @@
                  data-chat-id="{{ chat.id }}">
               {# Отдельный чат #}
               <div class="col-2 position-relative chat-image">
-                <img src="{{ recipient_image.url }}" alt="" class="rounded-circle">
+                <img src="{{ recipient_image.url }}" alt="" class="rounded-circle float-end">
                 <div class="online-status-{{ recipient.id }}">
                   <div
                     class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-list"></div>
@@ -132,7 +131,7 @@
             <div id="go-back-button" class="col-1 d-block d-md-none mt-2 ms-2">
               <a href="{% url 'chats:chat_list' %}"><i class="fa-solid fa-arrow-left"></i></a>
             </div>
-            <div class="col-1 mt-2 me-2 position-relative recipient-header-img">
+            <div class="col-1 mt-2 me-2 position-relative recipient-header-image">
               <img src="{{ recipient_image.url }}" alt="" class="rounded-circle">
               <div class="online-status-{{ recipient.id }}">
                 <div

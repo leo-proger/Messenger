@@ -64,8 +64,8 @@ def chats_view(request, chat_uuid=None):
 		recipient_online = ConnectionHistory.objects.get_or_create(user_id=recipient.id)[0].online_status
 		last_chat_message = msg if (msg := Message.objects.filter(chat=chat).last()) else ''
 		last_chat_message_time = last_chat_message.created_at
-		unread_count = Notification.objects.filter(recipient=request.user, target_object_id=chat.id,
-		                                           unread=True).count()
+		unread_count = Notification.objects.filter(recipient=request.user.id, target_object_id=chat.id,
+		                                           unread=True, verb='received a new message').count()
 		chats.append((
 			chat,
 			recipient,

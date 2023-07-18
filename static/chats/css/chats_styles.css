@@ -239,11 +239,11 @@
 /* ===== ===== */
 
 /* ===== Фото собеседника в шапке чата ===== */
-.recipient-header-img {
+.recipient-header-image {
   width: 40px;
 }
 
-.recipient-header-img > img {
+.recipient-header-image > img {
   width: 35px;
 }
 

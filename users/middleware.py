@@ -28,5 +28,3 @@ class SuperuserCheckMiddleware:
 			return HttpResponseRedirect(reverse('index'))
 		response = self.get_response(request)
 		return response
-
-

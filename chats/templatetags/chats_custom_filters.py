@@ -1,7 +1,4 @@
 from django import template
-from django.utils.text import Truncator
-
-from users.models import UserProfile, ConnectionHistory
 
 register = template.Library()
 

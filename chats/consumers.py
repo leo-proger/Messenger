@@ -39,27 +39,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		text_data_json = json.loads(text_data)
 		chat_uuid = text_data_json['chat_uuid']
 		message = text_data_json['message']
-		full_name = self.scope['user'].get_full_name()
 
 		await self.save_message(
 			chat_uuid,
 			message,
-			full_name,
 			)
 
 	# Эта функция отправляет сообщение и в js принять ее функцией Socket.onmessage
 	async def chat_message(self, event):
-		full_name = event['full_name']
 		message = event['message']
-		sender = event['sender']
+		sender_id = event['sender_id']
 		await self.send(text_data=json.dumps({
-			'sender': sender,
-			'full_name': full_name,
+			'sender_id': sender_id,
 			'message': message,
 			}))
 
 	@database_sync_to_async
-	def save_message(self, chat_uuid, message, full_name):
+	def save_message(self, chat_uuid, message):
 		if message.split():
 			sender = self.scope['user']
 			chat = Chat.objects.get(uuid=chat_uuid)
@@ -72,8 +68,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				# Этот словарь идет как параметр event в метод chat_message
 				{
 					'type': 'chat_message',
-					'sender': sender.email,
-					'full_name': full_name,
+					'sender_id': sender.id,
 					'message': message,
 					}
 				)

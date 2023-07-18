@@ -69,8 +69,8 @@
 {% block content %}{% endblock content %}
 
 <script>
-    let email = '{{ current_user_email|escapejs }}';
-    let currentUserID = {{ current_user_id|escapejs }};
+    let currentUserID = {{ current_user_id }};
+    sessionStorage.setItem('currentUserID', {{ current_user_id }})
 </script>
 
 {% block end_scripts %}{% endblock end_scripts %}

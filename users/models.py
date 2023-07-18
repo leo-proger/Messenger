@@ -1,17 +1,29 @@
+import os
+
 import uuid as uuid
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from phonenumber_field.modelfields import PhoneNumberField
 from django_resized import ResizedImageField
+from phonenumber_field.modelfields import PhoneNumberField
 
-import os
+
+def validate_file_size(value):
+	filesize = value.size
+
+	# Определите максимальный допустимый размер файла (в байтах)
+	max_size = 10 * 1024 * 1024  # 10 МБ
+
+	if filesize > max_size:
+		raise ValidationError("Размер файла превышает максимально допустимый размер (10 МБ).")
 
 
 def get_image_path(instance, filename):
-	return os.path.join('users', 'images', 'user_profile_images', instance.user.email, filename)
+	return os.path.join('users', 'images', 'user_profile_images', str(instance.user.id), str(uuid.uuid4()))
 
 
 class CustomUserManager(BaseUserManager):
@@ -66,7 +78,7 @@ class UserProfile(models.Model):
 	user = models.OneToOneField(
 		settings.AUTH_USER_MODEL,
 		on_delete=models.CASCADE,
-		related_name='user_profiles'
+		related_name='user_profiles',
 		)
 	# При поиске будет не id пользователя, а username
 	username = models.CharField(
@@ -74,7 +86,7 @@ class UserProfile(models.Model):
 		unique=True,
 		blank=True,
 		null=True,
-		verbose_name=_('Имя пользователя')
+		verbose_name=_('Имя пользователя'),
 		)
 	profile_image = ResizedImageField(
 		size=[1024, 1024],
@@ -82,29 +94,30 @@ class UserProfile(models.Model):
 		upload_to=get_image_path,
 		default='/users/images/user_profile_images/default_user_avatar.jpg',
 		blank=True,
-		verbose_name=_('Фотография')
+		verbose_name=_('Фотография'),
+		validators=[FileExtensionValidator('JPEG JPG PNG SVG'.split()), validate_file_size],
 		)
 	age = models.PositiveSmallIntegerField(
 		null=True,
 		blank=True,
-		verbose_name=_('Возраст')
+		verbose_name=_('Возраст'),
 		)
 	biography = models.TextField(
 		blank=True,
 		null=True,
-		verbose_name=_('Биография')
+		verbose_name=_('Биография'),
 		)
 	phone_number = PhoneNumberField(
 		unique=True,
 		null=True,
 		blank=True,
-		verbose_name=_('Номер телефона')
+		verbose_name=_('Номер телефона'),
 		)
 	city = models.CharField(
 		blank=True,
 		null=True,
 		verbose_name=_('Город'),
-		max_length=168
+		max_length=168,
 		)
 
 	class Meta:
