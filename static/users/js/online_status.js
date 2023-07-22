@@ -5,15 +5,7 @@ socket.onmessage = function (event) {
     const {user_id: receivedUserID, online_status: userOnlineStatus} = data;
 
     if (receivedUserID !== currentUserID) {
-        const onlineStatusChatList = document?.querySelector(`.online-status-${receivedUserID} .online-status-chat-list`);
-        const onlineStatusChatHeader = document?.querySelector(`.online-status-${receivedUserID} .online-status-chat-header`);
-
-        if (onlineStatusChatList) {
-            onlineStatusChatList.className = userOnlineStatus ? 'online online-status-chat-header' : 'offline online-status-chat-header';
-        }
-        if (onlineStatusChatHeader) {
-            onlineStatusChatHeader.className = userOnlineStatus ? 'online online-status-chat-list' : 'offline online-status-chat-list';
-        }
+        updateOnlineStatus(userOnlineStatus, receivedUserID);
     }
 }
 
@@ -27,9 +19,20 @@ socket.onopen = function (event) {
 socket.onclose = function (event) {
 }
 
-window.addEventListener('beforeunload', function (event) {
-    socket.send(JSON.stringify({
-        'online_status': false,
-        'user_id': currentUserID,
-    }))
-})
+function updateOnlineStatus(userOnlineStatus, receivedUserID) {
+    const onlineClass = 'online';
+    const offlineClass = 'offline';
+    const chatListClass = 'online-status-chat-list';
+    const chatHeaderClass = 'online-status-chat-header';
+
+    const statusClassName = userOnlineStatus ? onlineClass : offlineClass;
+
+    document.querySelectorAll(`.online-status-${receivedUserID} .${chatListClass}, .online-status-${receivedUserID} .${chatHeaderClass}`).forEach(el => {
+        if (el.classList.contains(chatListClass)) {
+            el.className = `${statusClassName} ${chatListClass}`;
+        }
+        if (el.classList.contains(chatHeaderClass)) {
+            el.className = `${statusClassName} ${chatHeaderClass}`;
+        }
+    });
+}

@@ -54,16 +54,15 @@ def is_ajax(request):
 
 
 def chats_view(request, chat_uuid=None):
-	# ----
 	chat_list = request.user.chats.all()
 	chats = []
 
 	for chat in chat_list:
 		recipient = chat.members.exclude(pk=request.user.pk).first()
 		recipient_image = UserProfile.objects.get(user=recipient).profile_image
-		recipient_online = ConnectionHistory.objects.get_or_create(user_id=recipient.id)[0].online_status
+		recipient_online = ConnectionHistory.objects.get(user=recipient).online_status
 		last_chat_message = msg if (msg := Message.objects.filter(chat=chat).last()) else ''
-		last_chat_message_time = last_chat_message.created_at
+		last_chat_message_time = last_chat_message.created_at if last_chat_message else ''
 		unread_count = Notification.objects.filter(recipient=request.user.id, target_object_id=chat.id,
 		                                           unread=True, verb='received a new message').count()
 		chats.append((
@@ -77,15 +76,19 @@ def chats_view(request, chat_uuid=None):
 			))
 
 	chats = sorted(chats, key=lambda x: x[5], reverse=True)
-	# ----
 
 	if chat_uuid:
-		chat = Chat.objects.get(uuid=chat_uuid)
+		chat = request.user.chats.filter(uuid=chat_uuid).first()
+		if not chat:
+			return redirect('chats:chat_list')
+
 		messages = Message.objects.filter(chat=chat)
 		recipient = chat.members.exclude(pk=request.user.pk).first()
 		recipient_image = recipient.user_profiles.profile_image
-		recipient_online = ConnectionHistory.objects.get_or_create(user_id=recipient.id)[0].online_status
+		recipient_online = ConnectionHistory.objects.get(user=recipient).online_status
 		form = None
+
+		Notification.objects.filter(recipient=request.user, target_object_id=chat.id).delete()
 
 		if request.method == 'POST':
 			form = MessageForm(request.POST)
@@ -94,8 +97,6 @@ def chats_view(request, chat_uuid=None):
 
 		if form is None:
 			form = MessageForm()
-
-		Notification.objects.filter(recipient=request.user, target_object_id=chat.id).mark_all_as_read()
 
 		context = {
 			'messages': messages,

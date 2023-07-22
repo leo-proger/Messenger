@@ -30,6 +30,10 @@
         initialize(chatUUID);
         scrollDown(document.getElementById('chat-messages'));
     </script>
+  {% else %}
+    <script>
+        let chatUUID = '';
+    </script>
   {% endif %}
 {% endblock end_scripts %}
 
@@ -100,11 +104,12 @@
                     class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-list"></div>
                 </div>
               </div>
-              <div id="chat-info-{{ chat.uuid }}" class="col mt-2 chat-info"> {# recipient-info #}
+              <div id="chat-info-{{ chat.uuid }}" class="col mt-2 chat-info"> {# Информация о собеседнике #}
                 <h3 title="{{ recipient.get_full_name }}">{{ recipient.get_full_name }}</h3>
                 <p>{{ last_chat_message }}</p>
               </div>
-              <div class="col-2 d-flex flex-column align-items-end justify-content-center message-info"> {# chat-info #}
+              <div class="col-2 d-flex flex-column align-items-end justify-content-center message-info">
+                {# Информация о чате #}
                 <div class="time-last-message">{{ last_chat_message_time|time:"H:i" }}</div>
                 {% if unread_messages_count %}
                   <div class="text-center my-1 unread-messages-count">

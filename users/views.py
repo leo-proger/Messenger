@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView, CreateView
 
 from .forms import UserRegistrationForm, LoginForm
-from .models import UserProfile
+from .models import UserProfile, ConnectionHistory
 
 
 def about(request):
@@ -48,7 +48,8 @@ class UserRegistrationView(CreateView):
 
 	def form_valid(self, form):
 		response = super().form_valid(form)
-		user_profile = UserProfile.objects.create(user=self.object)
+		UserProfile.objects.create(user=self.object)
+		ConnectionHistory.objects.create(user=self.object)
 
 		login(self.request, self.object)
 		return response

@@ -36,6 +36,9 @@ NotifySocket.onmessage = function (event) {
             timeLastChatMessage.textContent = getTimeNow();
 
             prependChat(receivedChatUUID);
+        } else {
+            markMessagesAsRead(chatUUID);
+            console.log(1)
         }
     }
 };

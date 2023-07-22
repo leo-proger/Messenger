@@ -1,5 +1,6 @@
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from notifications.models import Notification
@@ -12,7 +13,7 @@ from users.models import ConnectionHistory
 @receiver(post_save, sender=Message)
 def new_message_notification(sender, instance, created, **kwargs):
 	if created:
-		recipient_online = ConnectionHistory.objects.get(id=instance.recipient.id).online_status
+		recipient_online = ConnectionHistory.objects.get(user_id=instance.recipient.id).online_status
 
 		verb = 'received a new message'
 
@@ -33,7 +34,6 @@ def new_message_notification(sender, instance, created, **kwargs):
 					}
 				)
 		else:
-			# TODO: Старые уведомления перезаписываются и постоянно получается только 1 непрочитанное сообщение
 			actor = instance.sender
 			recipient = instance.recipient
 			target = instance.chat

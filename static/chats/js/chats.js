@@ -1,7 +1,7 @@
 let chatSocket = null;
 
 const initialize = function (newChatUUID = null, newLastChatMessage = null, newRecipientImage = null) {
-    scrollDown(document.getElementById('chat-messages'))
+    scrollDown(document.getElementById('chat-messages'), 'sharp')
     const chatUUID = newChatUUID || JSON.parse(document.getElementById('json-chat_uuid').textContent);
     chatSocket = new WebSocket(`ws://${window.location.host}/ws/chats/${chatUUID}/`);
 
@@ -187,11 +187,18 @@ function searchContact(value) {
 }
 
 
-function scrollDown(tag) {
-    tag.scrollTo({
-        top: tag.scrollHeight,
-        behavior: 'smooth'
-    });
+function scrollDown(tag, note = null) {
+    if (note === 'sharp') {
+        tag.scrollTo({
+            top: tag.scrollHeight,
+            behavior: 'auto',
+        });
+    } else {
+        tag.scrollTo({
+            top: tag.scrollHeight,
+            behavior: 'smooth',
+        });
+    }
 }
 
 function getTimeNow() {
@@ -239,7 +246,7 @@ $(`.chat`).on('click', function () {
             const $parsedHTML = $(parsedHTML);
 
             chatContent.html($parsedHTML.find('#chat-content').html());
-            document.title = $parsedHTML.find('title').text();
+            document.title = $parsedHTML.filter('title').text();
 
             history.pushState(null, null, `/chats/${selectedChatUUID}/`);
 
@@ -255,7 +262,7 @@ $(`.chat`).on('click', function () {
             chatUUID = selectedChatUUID;
 
             // TODO: При нажатии на маленьких экранах на чат, не прокручиваются вниз сообщения
-            // scrollDown($parsedHTML.find('#chat-messages'));
+
 
             markMessagesAsRead(selectedChatUUID);
 
