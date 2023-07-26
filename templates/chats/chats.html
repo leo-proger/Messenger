@@ -15,12 +15,7 @@
   <link rel="stylesheet" href="{% static 'chats/css/chats_styles.css' %}">
 {% endblock links %}
 
-{% block start_scripts %}
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-{% endblock start_scripts %}
-
 {% block end_scripts %}
-  <script src="https://kit.fontawesome.com/e5fcab2af9.js" crossorigin="anonymous"></script>
   <script src="{% static 'chats/js/chats.js' %}"></script>
 
   {% if chat_content %}
@@ -37,180 +32,145 @@
   {% endif %}
 {% endblock end_scripts %}
 
-{#      <nav class="navbar flex-column col-1 d-none d-md-flex bg-black">#}
-{#        <div class="navbar-brand">#}
-{#          <img src="https://cdn2.iconfinder.com/data/icons/ios7-inspired-mac-icon-set/1024/messages_5122x.png"#}
-{#               alt="logo"#}
-{#               class="img-fluid align-text-top d-inline-block">#}
-{#        </div>#}
-{##}
-{#        <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>#}
-{#        <a href="#" class="nav-link"><i class="fa-regular fa-user"></i></a>#}
-{#        <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i></a>#}
-{#        <a href="#" class="nav-link"><i class="fa-solid fa-comment"></i></a>#}
-{#        <a href="{% url 'logout' %}" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i></a>#}
-{#      </nav>#}
-
 {% block content %}
 
-  <div class="container-fluid">
-    <div class="row main-row">
-
-      <nav class="navbar d-none d-sm-flex bg-black flex-column main-navbar">
-        <ul class="navbar-nav h-100 align-items-center justify-content-center">
-          <li class="nav-item">
-            <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'chats:chat_list' %}" class="nav-link"><i class="fa-regular fa-message"></i></a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link"><i class="fa-regular fa-user"></i></a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i></a>
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'logout' %}" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i></a>
-          </li>
-        </ul>
-      </nav>
-
-      <section id="chat-list" class="{% if chat_content %}d-none{% else %}col{% endif %} d-md-block col-md-5">
-        <div class="row mt-2 align-items-center">
-          <div class="col-11">
-            <h1 class="chats-title">Чаты</h1>
-          </div>
-          <div class="col-1">
-            <div class="chat-actions-icon">
-              {# TODO: Вылезают разные функции (отметить все как прочитанное и тд) #}
-              <a href="#"><i class="fa-solid fa-ellipsis-vertical"></i></a>
-            </div>
-          </div>
+  <section id="chat-list" class="{% if chat_content %}d-none{% else %}col{% endif %} d-md-block col-md-5">
+    <div class="row mt-2 align-items-center">
+      <div class="col-11">
+        <h1 class="chats-title">Чаты</h1>
+      </div>
+      <div class="col-1">
+        <div class="chat-actions-icon">
+          {# TODO: Вылезают разные функции (отметить все как прочитанное и тд) #}
+          <a href="#"><i class="fa-solid fa-ellipsis-vertical"></i></a>
         </div>
-        <div class="row">
-          <input type="text" placeholder="Поиск чатов" class="form-control mx-auto chat-search">
-          <div class="mt-3 mb-2 line"></div>
-        </div>
-        <div id="chat-box" class="row justify-content-center"> {# Все чаты #}
-          {% for chat, recipient, recipient_image, recipient_online, last_chat_message, last_chat_message_time, unread_messages_count in chats %}
-            <div id="{{ chat.uuid }}" class="row my-1 align-items-center chat" data-chat-uuid="{{ chat.uuid }}"
-                 data-chat-id="{{ chat.id }}">
-              {# Отдельный чат #}
-              <div class="col-2 position-relative chat-image">
-                <img src="{{ recipient_image.url }}" alt="" class="rounded-circle float-end">
-                <div class="online-status-{{ recipient.id }}">
-                  <div
-                    class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-list"></div>
-                </div>
-              </div>
-              <div id="chat-info-{{ chat.uuid }}" class="col mt-2 chat-info"> {# Информация о собеседнике #}
-                <h3 title="{{ recipient.get_full_name }}">{{ recipient.get_full_name }}</h3>
-                <p>{{ last_chat_message }}</p>
-              </div>
-              <div class="col-2 d-flex flex-column align-items-end justify-content-center message-info">
-                {# Информация о чате #}
-                <div class="time-last-message">{{ last_chat_message_time|time:"H:i" }}</div>
-                {% if unread_messages_count %}
-                  <div class="text-center my-1 unread-messages-count">
-                    {% if unread_messages_count > 99 %}
-                      <span>...</span>
-                    {% else %}
-                      <span>{{ unread_messages_count }}</span>
-                    {% endif %}
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-          {% endfor %}
-          <div id="no-results-message" class="d-none d-flex justify-content-center mt-3">
-            <h3 style="color: var(--white)">Ничего не найдено</h3>
-          </div>
-        </div>
-      </section>
-
-      <section id="chat-content"
-               class="{% if chat_content %}d-block{% else %}d-none d-md-block{% endif %} col bg-black">
-        {% if chat_content %}
-          <div id="chat-header" class="row align-items-center">
-            <div id="go-back-button" class="col-1 d-block d-md-none mt-2 ms-2">
-              <a href="{% url 'chats:chat_list' %}"><i class="fa-solid fa-arrow-left"></i></a>
-            </div>
-            <div class="col-1 mt-2 me-2 position-relative recipient-header-image">
-              <img src="{{ recipient_image.url }}" alt="" class="rounded-circle">
-              <div class="online-status-{{ recipient.id }}">
-                <div
-                  class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-header"></div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="recipient-name">{{ recipient.get_full_name }}</div>
-            </div>
-            <div class="mt-2 line"></div>
-          </div>
-          <div id="chat-messages" class="row">
-            <div class="col mt-3">
-              {% for message in messages %}
-                {% if current_user == message.sender.email %}
-                  {% with previous_el=messages|previous:forloop.counter0 %}
-                    {% if forloop.first or previous_el.sender.email != current_user %}
-                      <div class="message-group-sent">
-                    {% endif %}
-                  {% endwith %}
-                <div class="message-sent">
-                  <div class="message-sent-text">
-                    {{ message.message }}
-                  </div>
-                </div>
-                {% with next_el=messages|next:forloop.counter0 %}
-                  {% if forloop.last or next_el.sender.email != current_user %}
-                    </div>
-                  {% endif %}
-                {% endwith %}
-                {% else %}
-                  {% with previous_el=messages|previous:forloop.counter0 %}
-                    {% if forloop.first or previous_el.sender.email == current_user or previous_el.sender.email != message.sender.email %}
-                      <div class="message-group-received">
-                      <div>
-                        <img src="{{ recipient_image.url }}" alt=""/>
-                      </div>
-                      <div>
-                    {% endif %}
-                  {% endwith %}
-                <div class="message-received">
-                  <div class="message-received-text">
-                    {{ message.message }}
-                  </div>
-                </div>
-                {% with next_el=messages|next:forloop.counter0 %}
-                  {% if forloop.last or next_el.sender.email != message.sender.email or next_el.sender.email == current_user %}
-                    </div>
-                    </div>
-                  {% endif %}
-                {% endwith %}
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
-          <div class="row d-flex align-items-center message-input-container">
-            <div class="col">
-              <form method="post" class="position-relative">
-                {% csrf_token %}
-                {{ form.message }}
-                <button class="send-button">
-                  <i class="fa-solid fa-paper-plane"></i>
-                </button>
-              </form>
-            </div>
-          </div>
-        {% else %}
-          <div class="row h-100">
-            <div class="col-12 h-100 d-flex justify-content-center align-items-center">
-              <h2 style="color: var(--lightgray); user-select: none"><<< Выберите Чат</h2>
-            </div>
-          </div>
-        {% endif %}
-      </section>
+      </div>
     </div>
+    <div class="row">
+      <input type="text" placeholder="Поиск чатов" class="form-control mx-auto chat-search">
+      <div class="mt-3 mb-2 line"></div>
+    </div>
+    <div id="chat-box" class="row justify-content-center"> {# Все чаты #}
+      {% for chat, recipient, recipient_image, recipient_online, last_chat_message, last_chat_message_time, unread_messages_count in chats %}
+        <div id="{{ chat.uuid }}" class="row my-1 align-items-center chat"
+             data-chat-uuid="{{ chat.uuid }}"
+             data-chat-id="{{ chat.id }}"
+             {% if chat.uuid == chat_uuid %}style="box-shadow: 0 0 15px 10px rgba(236, 236, 236, 0.2)"{% endif %}>
+          {# Отдельный чат #}
+          <div class="col-2 position-relative chat-image">
+            <img src="{{ recipient_image.url }}" alt="" class="rounded-circle float-end">
+            <div class="online-status-{{ recipient.id }}">
+              <div
+                class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-list"></div>
+            </div>
+          </div>
+          <div id="chat-info-{{ chat.uuid }}" class="col mt-2 chat-info"> {# Информация о собеседнике #}
+            <h3 title="{{ recipient.get_full_name }}">{{ recipient.get_full_name }}</h3>
+            <p>{{ last_chat_message }}</p>
+          </div>
+          <div class="col-2 d-flex flex-column align-items-end justify-content-center message-info">
+            {# Информация о чате #}
+            <div class="time-last-message">{{ last_chat_message_time|time:"H:i" }}</div>
+            {% if unread_messages_count %}
+              <div class="text-center my-1 unread-messages-count">
+                {% if unread_messages_count > 99 %}
+                  <span>...</span>
+                {% else %}
+                  <span>{{ unread_messages_count }}</span>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      <div id="no-results-message" class="d-none d-flex justify-content-center mt-3">
+        <h3 style="color: var(--white)">Ничего не найдено</h3>
+      </div>
+    </div>
+  </section>
+
+  <section id="chat-content"
+           class="{% if chat_content %}d-block{% else %}d-none d-md-block{% endif %} col bg-black">
+    {% if chat_content %}
+      <div id="chat-header" class="row align-items-center">
+        <div id="go-back-button" class="col-1 d-block d-md-none mt-2 ms-2">
+          <a href="{% url 'chats:chat_list' %}"><i class="fa-solid fa-arrow-left"></i></a>
+        </div>
+        <div class="col-1 mt-2 me-2 position-relative recipient-header-image">
+          <img src="{{ recipient_image.url }}" alt="" class="rounded-circle">
+          <div class="online-status-{{ recipient.id }}">
+            <div
+              class="{% if recipient_online %}online{% else %}offline{% endif %} online-status-chat-header"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="recipient-name">{{ recipient.get_full_name }}</div>
+        </div>
+        <div class="mt-2 line"></div>
+      </div>
+      <div id="chat-messages" class="row">
+        <div class="col mt-3">
+          {% for message in messages %}
+            {% if current_user == message.sender.email %}
+              {% with previous_el=messages|previous:forloop.counter0 %}
+                {% if forloop.first or previous_el.sender.email != current_user %}
+                  <div class="message-group-sent">
+                {% endif %}
+              {% endwith %}
+            <div class="message-sent">
+              <div class="message-sent-text">
+                {{ message.message }}
+              </div>
+            </div>
+            {% with next_el=messages|next:forloop.counter0 %}
+              {% if forloop.last or next_el.sender.email != current_user %}
+                </div>
+              {% endif %}
+            {% endwith %}
+            {% else %}
+              {% with previous_el=messages|previous:forloop.counter0 %}
+                {% if forloop.first or previous_el.sender.email == current_user or previous_el.sender.email != message.sender.email %}
+                  <div class="message-group-received">
+                  <div>
+                    <img src="{{ recipient_image.url }}" alt=""/>
+                  </div>
+                  <div>
+                {% endif %}
+              {% endwith %}
+            <div class="message-received">
+              <div class="message-received-text">
+                {{ message.message }}
+              </div>
+            </div>
+            {% with next_el=messages|next:forloop.counter0 %}
+              {% if forloop.last or next_el.sender.email != message.sender.email or next_el.sender.email == current_user %}
+                </div>
+                </div>
+              {% endif %}
+            {% endwith %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="row d-flex align-items-center message-input-container">
+        <div class="col">
+          <form method="post" class="position-relative">
+            {% csrf_token %}
+            {{ form.message }}
+            <button class="send-button">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div class="row h-100">
+        <div class="col-12 h-100 d-flex justify-content-center align-items-center">
+          <h2 style="color: var(--lightgray); user-select: none"><<< Выберите Чат</h2>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+  </div>
   </div>
 {% endblock content %}

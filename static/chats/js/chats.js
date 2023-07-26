@@ -235,42 +235,54 @@ function markMessagesAsRead(chatUUID) {
 // Обработчик клика на элемент .chat
 $(`.chat`).on('click', function () {
     const selectedChatUUID = $(this).data('chat-uuid');
-    const chatContent = $('#chat-content');
-    const chatList = $('#chat-list');
 
-    $.ajax({
-        url: `/chats/${selectedChatUUID}/`,
-        method: 'GET',
-        success: (response) => {
-            const parsedHTML = $.parseHTML(response);
-            const $parsedHTML = $(parsedHTML);
+    if (selectedChatUUID !== chatUUID) {
+        const chatContent = $('#chat-content');
+        const chatList = $('#chat-list');
 
-            chatContent.html($parsedHTML.find('#chat-content').html());
-            document.title = $parsedHTML.filter('title').text();
+        $.ajax({
+            url: `/chats/${selectedChatUUID}/`,
+            method: 'GET',
+            success: (response) => {
+                $(`#${selectedChatUUID}`).css({
+                    'box-shadow': '0 0 15px 10px rgba(236, 236, 236, 0.2)'
+                });
+                if (chatUUID) {
+                    $(`#${chatUUID}`).css({
+                        'box-shadow': ''
+                    })
+                }
 
-            history.pushState(null, null, `/chats/${selectedChatUUID}/`);
+                const parsedHTML = $.parseHTML(response);
+                const $parsedHTML = $(parsedHTML);
 
-            if (chatSocket !== null) {
-                chatSocket.close();
+                chatContent.html($parsedHTML.find('#chat-content').html());
+                document.title = $parsedHTML.filter('title').text();
+
+                history.pushState(null, null, `/chats/${selectedChatUUID}/`);
+
+                if (chatSocket !== null) {
+                    chatSocket.close();
+                }
+
+                const newLastChatMessage = $parsedHTML.find(`#chat-info-${selectedChatUUID} > p`)[1];
+                const newRecipientImage = $parsedHTML.find('.recipient-header-image > img').attr('src');
+
+                initialize(selectedChatUUID, newLastChatMessage, newRecipientImage);
+
+                chatUUID = selectedChatUUID;
+
+                // TODO: При нажатии на маленьких экранах на чат, не прокручиваются вниз сообщения
+
+
+                markMessagesAsRead(selectedChatUUID);
+
+                chatList.removeClass().addClass('d-none d-md-block col-md-5');
+                chatContent.removeClass().addClass('d-block col bg-black');
+            },
+            error: () => {
             }
-
-            const newLastChatMessage = $parsedHTML.find(`#chat-info-${selectedChatUUID} > p`)[1];
-            const newRecipientImage = $parsedHTML.find('.recipient-header-image > img').attr('src');
-
-            initialize(selectedChatUUID, newLastChatMessage, newRecipientImage);
-
-            chatUUID = selectedChatUUID;
-
-            // TODO: При нажатии на маленьких экранах на чат, не прокручиваются вниз сообщения
-
-
-            markMessagesAsRead(selectedChatUUID);
-
-            chatList.removeClass().addClass('d-none d-md-block col-md-5');
-            chatContent.removeClass().addClass('d-block col bg-black');
-        },
-        error: () => {
-        }
-    });
+        });
+    }
 });
 

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userprofile',
             name='profile_image',
-            field=models.ImageField(blank=True, default='static/users/images/default_user_avatar.jpg', upload_to=users.models.get_image_path, verbose_name='Фотография'),
+            field=models.ImageField(blank=True, default='static/users/images/default_user_avatar.jpg', upload_to=users.models.get_user_image_path, verbose_name='Фотография'),
         ),
     ]

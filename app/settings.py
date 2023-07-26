@@ -82,6 +82,7 @@ TEMPLATES = [
 				'users.context_processors.current_user_image',
 				'users.context_processors.current_user_id',
 				'users.context_processors.current_user_full_name',
+				'users.context_processors.current_user_profile_background_image',
 				],
 			},
 		},

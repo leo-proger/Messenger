@@ -6,5 +6,18 @@
 {% endblock links %}
 
 {% block content %}
-
+  <section id="user-profile-images" class="col">
+    <div id="main-bg">
+      <img src="{{ current_user_profile_background_image.url }}" alt="" class="img-fluid">
+    </div>
+  <div class="user-profile-image">
+    <img src="{{ current_user_image.url }}" alt="">
+  </div>
+  </section>
+  <section id="user-info" class="col">
+    <div class="user-name">
+      {{ request.user.get_full_name }}
+    </div>
+    <div class="user-bio"></div>
+  </section>
 {% endblock content %}

@@ -63,12 +63,8 @@ class UserLoginView(LoginView):
 	def form_valid(self, form, *args, **kwargs):
 		response = super().form_valid(form)
 		response.set_cookie('is_login', 'true')
-		messages.success(self.request, 'Авторизация прошла успешно!')
 		return super().form_valid(form)
 
-
-# class UserProfileView(TemplateView):
-# 	pass
 
 def user_profile_view(request, user_id):
 	return render(request, 'users/user_profile.html', context={'user_id': user_id})

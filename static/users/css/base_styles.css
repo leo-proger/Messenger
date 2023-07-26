@@ -1,3 +1,29 @@
+:root {
+  --darkgray: #24272b;
+  --lightgray: #b7b7b7;
+  --gray: #5b5b5b;
+  --gray2: #495057;
+  --gray3: #222222;
+  --black: #111112;
+  --lightblack: #232325;
+  --white: #ececec;
+  --blue: #1976d2;
+}
+
+/* ===== Стили для линии прокрутки ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  opacity: 0;
+}
+
+/* Стили для ползунка прокрутки */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+/* ===== ===== */
+
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Open Sans, Ubuntu, Fira Sans, Helvetica Neue, sans-serif;
   height: 100%;
@@ -6,4 +32,34 @@ html, body {
   min-width: 300px;
   /*min-height: 650px;*/
   /*overflow: auto;*/
+}
+
+.main-row {
+  height: 100vh;
+}
+
+/* ========== Навигационная панель ========== */
+#main-navbar {
+  width: 70px;
+  border-right: 2px solid var(--gray2);
+}
+
+.nav-link > i {
+  color: var(--lightgray);
+  font-size: 22px;
+
+  transition: color 0.2s ease-out;
+}
+
+.nav-link > i:hover {
+  color: var(--blue);
+}
+
+.user-image {
+  transition: transform 0.2s ease-out, box-shadow 0.4s ease;
+}
+
+.user-image:hover {
+  transform: scale(0.96);
+  box-shadow: 0 0 15px 8px rgba(236, 236, 236, 0.7);
 }

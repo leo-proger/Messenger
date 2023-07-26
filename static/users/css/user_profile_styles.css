@@ -1,0 +1,20 @@
+#main-bg > img {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  height: 170px;
+  width: 100%;
+}
+
+.user-profile-image {
+  position: relative;
+  display: inline-block;
+  bottom: 80px;
+  left: 50px;
+}
+
+.user-profile-image > img {
+  width: 150px;
+  border-radius: 50%;
+  border: 3px solid var(--darkgray);
+}

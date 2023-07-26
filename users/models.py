@@ -22,8 +22,12 @@ def validate_file_size(value):
 		raise ValidationError("Размер файла превышает максимально допустимый размер (10 МБ).")
 
 
-def get_image_path(instance, filename):
+def get_user_image_path(instance, filename):
 	return os.path.join('users', 'images', 'user_profile_images', str(instance.user.id), str(uuid.uuid4()))
+
+
+def get_user_profile_image_path(instance, filename):
+	return os.path.join('users', 'images', 'user_profile_background_images', str(instance.user.id), str(uuid.uuid4()))
 
 
 class CustomUserManager(BaseUserManager):
@@ -91,10 +95,18 @@ class UserProfile(models.Model):
 	profile_image = ResizedImageField(
 		size=[1024, 1024],
 		crop=['middle', 'center'],
-		upload_to=get_image_path,
+		upload_to=get_user_image_path,
 		default='/users/images/user_profile_images/default_user_avatar.jpg',
 		blank=True,
 		verbose_name=_('Фотография'),
+		validators=[FileExtensionValidator('JPEG JPG PNG SVG'.split()), validate_file_size],
+		)
+	background_profile_image = ResizedImageField(
+		crop=['middle', 'center'],
+		upload_to=get_user_image_path,
+		default='/users/images/user_profile_background_images/default_user_profile_bg_image.jpg',
+		blank=True,
+		verbose_name=_('Фоновое изображение'),
 		validators=[FileExtensionValidator('JPEG JPG PNG SVG'.split()), validate_file_size],
 		)
 	age = models.PositiveSmallIntegerField(
@@ -129,7 +141,7 @@ class UserProfile(models.Model):
 
 
 class ConnectionHistory(models.Model):
-	user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+	user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='connectionhistory')
 	device_id = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name=_('id устройства'))
 	date_joined = models.DateField(auto_now_add=True, verbose_name=_('Дата регистрации'))
 	last_online = models.DateTimeField(auto_now=True, null=True, blank=True, verbose_name=_('Время последнего входа'))
@@ -146,4 +158,3 @@ class ConnectionHistory(models.Model):
 		self.online_status = online_status
 		self.last_online = timezone.now()
 		self.save(update_fields=['online_status', 'last_online'])
-

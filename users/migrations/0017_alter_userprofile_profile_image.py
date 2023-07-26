@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userprofile',
             name='profile_image',
-            field=django_resized.forms.ResizedImageField(blank=True, crop=['middle', 'center'], default='users/images/user_profile_images/default_user_avatar.jpg', force_format=None, keep_meta=True, quality=-1, scale=None, size=[1024, 1024], upload_to=users.models.get_image_path, verbose_name='Фотография'),
+            field=django_resized.forms.ResizedImageField(blank=True, crop=['middle', 'center'], default='users/images/user_profile_images/default_user_avatar.jpg', force_format=None, keep_meta=True, quality=-1, scale=None, size=[1024, 1024], upload_to=users.models.get_user_image_path, verbose_name='Фотография'),
         ),
     ]
