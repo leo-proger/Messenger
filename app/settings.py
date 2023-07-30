@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+from decouple import config
 
 from pathlib import Path
 
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-lu96+25&%i28hgxx1tz@x3bp+mk23#4a!^znz0krhcgju994+$'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -82,7 +83,6 @@ TEMPLATES = [
 				'users.context_processors.current_user_image',
 				'users.context_processors.current_user_id',
 				'users.context_processors.current_user_full_name',
-				'users.context_processors.current_user_profile_background_image',
 				],
 			},
 		},
@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'RU-ru'
 
 TIME_ZONE = 'Europe/Moscow'
 
@@ -160,5 +160,4 @@ CHANNEL_LAYERS = {
 			"hosts": [("127.0.0.1", 6379)],
 			},
 		},
-
 	}
