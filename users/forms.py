@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.formfields import PhoneNumberField
 
-from users.models import UserProfile
+from users.models import UserProfile, Post
 
 User = get_user_model()
 
@@ -50,3 +50,9 @@ class UserProfileForm(forms.ModelForm):
 
 class MessageForm(forms.Form):
 	text = forms.CharField(label=_('Текст сообщение'), widget=forms.Textarea(attrs={'rows': 3}))
+
+
+class PostForm(forms.ModelForm):
+	class Meta:
+		model = Post
+		fields = ['text', 'image']

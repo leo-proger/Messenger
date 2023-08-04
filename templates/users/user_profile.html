@@ -1,23 +1,170 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load users_custom_filters %}
+
+{% block title %}
+  {{ user_full_name }}
+{% endblock %}
 
 {% block links %}
   <link rel="stylesheet" href="{% static 'users/css/user_profile_styles.css' %}">
 {% endblock links %}
 
 {% block content %}
-  <section id="user-profile-images" class="col">
-    <div id="main-bg">
-      <img src="{{ current_user_profile_background_image.url }}" alt="" class="img-fluid">
+  {# Секция профиля пользователя #}
+  <section id="profile-section" class="col position-relative">
+
+    <div class="row">
+      <div class="col-12 col-lg-8">
+        {#  Информационная секция пользователя #}
+        <section id="info-section" class="row align-items-center mx-2 my-4 mb-0 p-3 hover-scale">
+          {# Фото пользователя #}
+          <div id="profile-image" class="col-12 col-lg-3 mx-auto mx-lg-0">
+            <img src="{{ user_profile_image.url }}" alt="" class="img-fluid rounded-circle">
+          </div>
+
+          {# Имя и онлайн статус пользователя #}
+          <div class="col-12 col-lg d-flex justify-content-center justify-content-lg-start">
+            <div class="row flex-column">
+              <h1 id="name"
+                  class="col-12 col-lg my-2 my-lg-0 d-flex justify-content-center justify-content-lg-start">{{ user_full_name }}</h1>
+              <span id="online-status"
+                    class="col-12 col-lg d-flex justify-content-center justify-content-lg-start mb-2">{{ user_online|last_online_formatter }}</span>
+            </div>
+          </div>
+
+          {# Кнопка добавления в друзья или редактирования профиля #}
+          <div class="col-12 col-lg-4 d-flex justify-content-center justify-content-lg-end">
+            {% if request.user.id == user_id %}
+              <div class="text-center p-1 profile-button">
+                <a href="#">Редактировать профиль</a>
+              </div>
+            {% else %}
+              <div class="text-center p-1 profile-button">
+                <a href="#">Заявка в друзья <i class="fa-solid fa-user-group"></i></a>
+              </div>
+            {% endif %}
+          </div>
+        </section>
+
+        {# Биография пользователя #}
+        {% if user_biography %}
+          <div id="bio" class="row mx-2 my-3 p-2 hover-scale">
+            <p class="col">{{ user_biography }}</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="col-12 col-lg-4">
+        {# Секция друзей пользователя #}
+        <section id="friends"
+                 class="row flex-column mx-2 ms-lg-0 me-lg-2 p-2 hover-scale {% if user_biography %}mb-3 mt-lg-4{% else %}my-3{% endif %}">
+          <header id="friend-section-title" class="col">
+            <h4>Друзья:</h4>
+          </header>
+          <main class="col">
+            <ul id="list-friends" class="p-0 mt-2">
+              {# Отдельный друг #}
+              <li class="friend">
+                <div class="row d-flex justify-content-start align-items-center">
+                  <div class="col-auto">
+                    <div class="friend-image">
+                      <img src="{{ user_profile_image.url }}" alt="" class="rounded-circle">
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <h5 class="friend-name">Елена Красавина</h5>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </main>
+          <footer>
+            <a id="show-more-friends" href="#">Показать всех</a>
+          </footer>
+        </section>
+      </div>
+
+      {% if request.user.id == user_id %}
+        <div class="col-12 col-lg-8">
+          <div id="add-post-buttons" class="row mx-2">
+            <div class="col-12 col-sm p-0 hover-scale">
+              {# Кнопка добавления фото с модальным окном #}
+              <button id="add-image-button" data-bs-toggle="modal" data-bs-target="#addImageModal">Добавить фото
+              </button>
+            </div>
+            <div class="col-12 col-sm p-0 hover-scale">
+              {# Кнопка добавления записи с модальным окном #}
+              <button id="add-note-button" data-bs-toggle="modal" data-bs-target="#addNoteModal">Добавить запись
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="col-12 col-lg-8">
+        <section id="posts" class="row flex-column mx-2 my-4 p-2" style="height: calc(100vh - 340px); overflow-y: auto;">
+          {% for post in user_posts %}
+            <div class="col my-2 hover-scale post">
+              <div class="row flex-column">
+                {% if post.text %}
+                  <div class="col-2">
+                    <p>{{ post.text }}</p>
+                  </div>
+                {% endif %}
+
+                {% if post.image %}
+                  <div class="col">
+                    <img src="{{ post.image.url }}" alt="" class="img-fluid">
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </section>
+      </div>
     </div>
-  <div class="user-profile-image">
-    <img src="{{ current_user_image.url }}" alt="">
+  </section>
+
+  <!-- Модальное окно для добавления фото -->
+  <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addImageModalLabel">Добавить фото</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+          <div class="modal-body">
+            {% csrf_token %}
+            {{ form }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Опубликовать</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  </section>
-  <section id="user-info" class="col">
-    <div class="user-name">
-      {{ request.user.get_full_name }}
+
+
+  <!-- Модальное окно для добавления записи -->
+  <div class="modal fade" id="addNoteModal" tabindex="-1" aria-labelledby="addNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addNoteModalLabel">Добавить запись</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Здесь можно разместить форму для ввода текста -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="button" class="btn btn-primary">Опубликовать</button>
+        </div>
+      </div>
     </div>
-    <div class="user-bio"></div>
-  </section>
+  </div>
 {% endblock content %}

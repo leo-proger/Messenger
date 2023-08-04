@@ -5,7 +5,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
   <title>{% block title %}Title{% endblock title %}</title>
 
@@ -24,9 +26,9 @@
 <body>
 
 <div class="container-fluid">
-  <div class="row main-row">
+  <div class="row main-row mx-xl-auto">
     {% if request.user.is_authenticated %}
-      <nav id="main-navbar" class="navbar d-none d-sm-flex bg-black flex-column col-1">
+      <nav id="main-navbar" class="navbar d-none d-sm-flex bg-black flex-column col-2">
         <ul class="navbar-nav h-100 align-items-center justify-content-center">
           <li class="nav-item mb-1">
             <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>
@@ -58,7 +60,7 @@
 </div>
 
 <script>
-    let currentUserID = {{ current_user_id }};
+  let currentUserID = {{ current_user_id }};
 </script>
 
 {% block end_scripts %}{% endblock end_scripts %}

@@ -5,15 +5,8 @@ User = get_user_model()
 
 def current_user_image(request):
 	if request.user.is_authenticated:
-		image = request.user.user_profiles.profile_image
+		image = request.user.user_profile.profile_image
 		return {'current_user_image': image}
-	return ''
-
-
-def current_user_profile_background_image(request):
-	if request.user.is_authenticated:
-		bg_image = request.user.user_profiles.background_profile_image
-		return {'current_user_profile_background_image': bg_image}
 	return ''
 
 

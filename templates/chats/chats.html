@@ -92,7 +92,7 @@
   <section id="chat-content"
            class="{% if chat_content %}d-block{% else %}d-none d-md-block{% endif %} col bg-black">
     {% if chat_content %}
-      <div id="chat-header" class="row align-items-center">
+      <header id="chat-header" class="row align-items-center">
         <div id="go-back-button" class="col-1 d-block d-md-none mt-2 ms-2">
           <a href="{% url 'chats:chat_list' %}"><i class="fa-solid fa-arrow-left"></i></a>
         </div>
@@ -104,11 +104,11 @@
           </div>
         </div>
         <div class="col">
-          <div class="recipient-name">{{ recipient.get_full_name }}</div>
+          <a href="{% url 'users:profile' recipient.id %}" class="recipient-name">{{ recipient.get_full_name }}</a>
         </div>
         <div class="mt-2 line"></div>
-      </div>
-      <div id="chat-messages" class="row">
+      </header>
+      <main id="chat-messages" class="row">
         <div class="col mt-3">
           {% for message in messages %}
             {% if current_user == message.sender.email %}
@@ -151,8 +151,8 @@
             {% endif %}
           {% endfor %}
         </div>
-      </div>
-      <div class="row d-flex align-items-center message-input-container">
+      </main>
+      <footer class="row d-flex align-items-center message-input-container">
         <div class="col">
           <form method="post" class="position-relative">
             {% csrf_token %}
@@ -162,7 +162,7 @@
             </button>
           </form>
         </div>
-      </div>
+      </footer>
     {% else %}
       <div class="row h-100">
         <div class="col-12 h-100 d-flex justify-content-center align-items-center">
@@ -171,6 +171,4 @@
       </div>
     {% endif %}
   </section>
-  </div>
-  </div>
 {% endblock content %}

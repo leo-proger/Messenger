@@ -23,11 +23,12 @@ def validate_file_size(value):
 
 
 def get_user_image_path(instance, filename):
-	return os.path.join('users', 'images', 'user_profile_images', str(instance.user.id), str(uuid.uuid4()))
+	return os.path.join('users', 'images', 'user_profile_images', str(instance.user.id),
+	                    str(uuid.uuid4()) + '.' + filename.split('.')[-1])
 
 
-def get_user_profile_image_path(instance, filename):
-	return os.path.join('users', 'images', 'user_profile_background_images', str(instance.user.id), str(uuid.uuid4()))
+def get_post_image_path(instance, filename):
+	return os.path.join('users', 'images', 'user_post_images', str(instance.user.id), str(uuid.uuid4()))
 
 
 class CustomUserManager(BaseUserManager):
@@ -82,7 +83,7 @@ class UserProfile(models.Model):
 	user = models.OneToOneField(
 		settings.AUTH_USER_MODEL,
 		on_delete=models.CASCADE,
-		related_name='user_profiles',
+		related_name='user_profile',
 		)
 	# При поиске будет не id пользователя, а username
 	username = models.CharField(
@@ -99,14 +100,6 @@ class UserProfile(models.Model):
 		default='/users/images/user_profile_images/default_user_avatar.jpg',
 		blank=True,
 		verbose_name=_('Фотография'),
-		validators=[FileExtensionValidator('JPEG JPG PNG SVG'.split()), validate_file_size],
-		)
-	background_profile_image = ResizedImageField(
-		crop=['middle', 'center'],
-		upload_to=get_user_image_path,
-		default='/users/images/user_profile_background_images/default_user_profile_bg_image.jpg',
-		blank=True,
-		verbose_name=_('Фоновое изображение'),
 		validators=[FileExtensionValidator('JPEG JPG PNG SVG'.split()), validate_file_size],
 		)
 	age = models.PositiveSmallIntegerField(
@@ -140,8 +133,15 @@ class UserProfile(models.Model):
 		return self.user.email
 
 
+class Post(models.Model):
+	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_posts')
+	text = models.TextField(blank=True, null=True)
+	image = models.ImageField(upload_to=get_post_image_path, blank=True, null=True)
+	created = models.DateTimeField(auto_now_add=True)
+
+
 class ConnectionHistory(models.Model):
-	user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='connectionhistory')
+	user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='connection_history')
 	device_id = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name=_('id устройства'))
 	date_joined = models.DateField(auto_now_add=True, verbose_name=_('Дата регистрации'))
 	last_online = models.DateTimeField(auto_now=True, null=True, blank=True, verbose_name=_('Время последнего входа'))

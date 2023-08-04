@@ -49,6 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def chat_message(self, event):
 		message = event['message']
 		sender_id = event['sender_id']
+
 		await self.send(text_data=json.dumps({
 			'sender_id': sender_id,
 			'message': message,
@@ -57,18 +58,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	@database_sync_to_async
 	def save_message(self, chat_uuid, message):
 		if message.split():
-			sender = self.scope['user'].id
+			sender_id = self.scope['user'].id
 			chat = Chat.objects.get(uuid=chat_uuid)
-			recipient = chat.members.exclude(id=sender).first()
+			recipient = chat.members.exclude(id=sender_id).first()
 
-			Message.objects.create(chat=chat, sender_id=sender, recipient=recipient, message=message.strip())
+			Message.objects.create(chat=chat, sender_id=sender_id, recipient=recipient, message=message.strip())
 
 			async_to_sync(self.channel_layer.group_send)(
 				self.room_group_name,
 				# Этот словарь идет как параметр event в метод chat_message
 				{
 					'type': 'chat_message',
-					'sender_id': sender,
+					'sender_id': sender_id,
 					'message': message,
 					}
 				)

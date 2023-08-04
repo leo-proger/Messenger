@@ -1,14 +1,12 @@
-from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.views import LoginView
-from django.http import JsonResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.utils import timezone
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import CreateView
 
-from .forms import UserRegistrationForm, LoginForm
-from .models import UserProfile, ConnectionHistory
+from .forms import UserRegistrationForm, LoginForm, PostForm
+
+User = get_user_model()
 
 
 def about(request):
@@ -17,15 +15,6 @@ def about(request):
 
 def index(request):
 	return render(request, 'users/index.html')
-
-
-# def check_online(request, user=None):
-# 	user = user or request.user
-# 	now = timezone.now()
-# 	online_threshold = now - timezone.timedelta(seconds=30)
-# 	is_online = user.last_online is not None and user.last_online > online_threshold
-# 	user.set_online()
-# 	return JsonResponse({'is_online': is_online})
 
 
 # def user_register(request):
@@ -48,10 +37,8 @@ class UserRegistrationView(CreateView):
 
 	def form_valid(self, form):
 		response = super().form_valid(form)
-		UserProfile.objects.create(user=self.object)
-		ConnectionHistory.objects.create(user=self.object)
-
 		login(self.request, self.object)
+
 		return response
 
 
@@ -67,4 +54,33 @@ class UserLoginView(LoginView):
 
 
 def user_profile_view(request, user_id):
-	return render(request, 'users/user_profile.html', context={'user_id': user_id})
+	user = get_object_or_404(User, id=user_id)
+
+	if request.method == 'POST':
+		post_form = PostForm(request.POST or None, request.FILES or None)
+		if post_form.is_valid():
+			post = post_form.save(commit=False)
+			post.user = request.user
+			post.save()
+			return redirect('users:profile', user_id=user.pk)
+	else:
+		post_form = PostForm()
+
+	if request.user.id == user_id:
+		user_online = 'online'
+	else:
+		user_online = is_online if (
+			is_online := user.connection_history.online_status) else user.connection_history.last_online
+
+	context = {
+		'user_id': user_id,
+		'user_full_name': user.get_full_name(),
+		'user_profile_image': user.user_profile.profile_image,
+		'user_biography': user.user_profile.biography.strip(),
+		'user_posts': user.user_posts.all(),
+		'user_online': user_online,
+
+		'form': post_form,
+		}
+
+	return render(request, 'users/user_profile.html', context)

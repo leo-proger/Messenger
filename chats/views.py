@@ -1,16 +1,13 @@
-import json
-
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, CreateView, DeleteView
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView
 from notifications.models import Notification
 
+from users.models import UserProfile, ConnectionHistory
 # from users.views import check_online
 from .forms import MessageForm, ChatCreateForm
 from .models import Chat, Message
-from users.models import UserProfile, ConnectionHistory
 
 User = get_user_model()
 
@@ -84,7 +81,7 @@ def chats_view(request, chat_uuid=None):
 
 		messages = Message.objects.filter(chat=chat)
 		recipient = chat.members.exclude(pk=request.user.pk).first()
-		recipient_image = recipient.user_profiles.profile_image
+		recipient_image = recipient.user_profile.profile_image
 		recipient_online = ConnectionHistory.objects.get(user=recipient).online_status
 		form = None
 

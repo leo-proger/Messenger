@@ -1,20 +1,172 @@
-#main-bg > img {
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: cover;
-  height: 170px;
+/* ========== Блок профиля пользователя ========== */
+
+/* Положение элементов */
+#profile-section {
+  background: var(--gray3);
+}
+
+/* ========== Информация о пользователе ========== */
+
+/* Положение элементов */
+#info-section {
+  border: 2px solid var(--gray);
+  border-radius: 10px;
+}
+
+/* Фото пользователя в профиле */
+#profile-image {
+  width: 100px;
+}
+
+#profile-image img {
+  border: 2px solid var(--gray2);
+}
+
+/* Имя и фамилия пользователя */
+#name {
+  color: var(--white);
+  font-size: 1.3rem;
+}
+
+/* Онлайн статус пользователя */
+#online-status {
+  color: var(--lightgray);
+  font-size: 14px;
+}
+
+/* ===== Кнопки для редактирования профиля и отправки заявки в друзья ===== */
+.profile-button {
+  width: 200px;
+  text-decoration: none;
+  color: var(--white);
+  font-size: 15px;
+  border: 2px solid var(--gray);
+  border-radius: 8px;
+  transition: background-color 0.2s ease-out;
+}
+
+.profile-button:hover {
+  background-color: var(--white);
+}
+
+.profile-button a {
+  text-decoration: none;
+  color: var(--white);
+  font-size: 0.95rem;
+  transition: color 0.2s ease-out;
+}
+
+.profile-button:hover a, .profile-button:hover a i {
+  color: var(--black);
+}
+
+.profile-button a i {
+  font-size: 14px;
+  color: var(--white);
+  transition: color 0.2s ease-out;
+}
+
+/* ===== ===== */
+
+/* Биография пользователя */
+#bio {
+  border: 2px solid var(--gray);
+  border-radius: 10px;
+  color: var(--white);
+}
+
+/* ========== Блок друзей пользователя ========== */
+
+/* Положение элементов */
+#friends {
+  border: 2px solid var(--gray);
+  border-radius: 10px;
+}
+
+/* Заголовок секции "Друзья" */
+#friend-section-title h4 {
+  color: var(--white);
+  font-size: 1.4em;
+}
+
+/* Список друзей */
+#list-friends {
+  list-style: none;
+}
+
+/* ===== Отдельный друг в списке друзей ===== */
+/* Отдельный друг */
+.friend::after {
+  content: "";
+  display: block;
+  width: 80%;
+  border-bottom: 2px solid var(--gray2);
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.friend-image img {
+  width: 40px;
+}
+
+.friend-name {
+  color: var(--white);
+  font-size: 1.05rem;
+}
+
+/* ===== ===== */
+/* ========== ==========*/
+
+/* ========== Кнопки добавления постов пользователя ========== */
+
+/* Положение элементов */
+#add-post-buttons {
+  border: 2px solid var(--gray);
+  border-radius: 10px;
+}
+
+#add-post-buttons button {
   width: 100%;
+  background-color: var(--white);
 }
 
-.user-profile-image {
-  position: relative;
-  display: inline-block;
-  bottom: 80px;
-  left: 50px;
+/* Кнопка добавления изображения */
+#add-image-button {
+  border-bottom-left-radius: 8px;
+  border-top-left-radius: 8px;
+  border-right: 2px solid var(--gray);
 }
 
-.user-profile-image > img {
-  width: 150px;
-  border-radius: 50%;
-  border: 3px solid var(--darkgray);
+/* Кнопка добавления записи */
+#add-note-button {
+  border-bottom-right-radius: 8px;
+  border-top-right-radius: 8px;
+  border-left: 2px solid var(--gray);
+}
+
+/* ========== ========== */
+
+/* Медиа запрос для мобильных устройств */
+@media (max-width: 576px) {
+  #add-image-button {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 0;
+    border-bottom: 2px solid var(--gray);
+  }
+
+  #add-note-button {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 0;
+    border-top: 2px solid var(--gray);
+  }
+}
+
+/* ========== ========== */
+
+/* ========== Посты пользователя ========== */
+.post {
+  border: 2px solid var(--gray);
+  border-radius: 10px;
 }

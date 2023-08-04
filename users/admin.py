@@ -3,14 +3,14 @@ from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 
 from chats.admin import ChatInline
-from users.models import UserProfile, ConnectionHistory
+from users.models import UserProfile, ConnectionHistory, Post
 
 User = get_user_model()
 
 
 class CustomUserAdmin(admin.ModelAdmin):
 	def profile_link(self, obj):
-		url = "/admin/users/userprofile/{}/".format(obj.user_profiles.id)
+		url = "/admin/users/userprofile/{}/".format(obj.user_profile.id)
 		return format_html('<a href="{}">View Profile</a>', url)
 
 	def chat_list(self, obj):
@@ -36,3 +36,8 @@ class UserProfileAdmin(admin.ModelAdmin):
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(ConnectionHistory)
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+	pass

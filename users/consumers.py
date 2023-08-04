@@ -1,11 +1,7 @@
 import json
-import asyncio
-from datetime import datetime, timedelta
 
-from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from pytz import utc
 
 from users.models import ConnectionHistory
 
@@ -33,16 +29,11 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 
 	@database_sync_to_async
 	def update_online_status(self, user_id, online_status: bool):
-		user_connection_history = ConnectionHistory.objects.get(user_id=user_id)
-		user_connection_history.update_online_status(online_status=online_status)
-		# async_to_sync(self.channel_layer.group_send)(
-		# 	self.room_group_name,
-		# 	{
-		# 		'type': 'send_online_status',
-		# 		'user_id': user_id,
-		# 		'online_status': online_status
-		# 		}
-		# 	)
+		try:
+			user_connection_history = ConnectionHistory.objects.get(user_id=user_id)
+			user_connection_history.update_online_status(online_status=online_status)
+		except ConnectionHistory.DoesNotExist:
+			pass
 
 	async def send_online_status(self, event):
 		user_id = event['user_id']

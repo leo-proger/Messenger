@@ -38,7 +38,6 @@ NotifySocket.onmessage = function (event) {
             prependChat(receivedChatUUID);
         } else {
             markMessagesAsRead(chatUUID);
-            console.log(1)
         }
     }
 };
