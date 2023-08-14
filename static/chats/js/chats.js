@@ -187,36 +187,6 @@ function searchContact(value) {
     noResultsMessage.toggleClass('d-none', hasResults);
 }
 
-function scrollDown(tag, note = null) {
-    if (note === 'sharp') {
-        tag.scrollTo({
-            top: tag.scrollHeight,
-            behavior: 'auto',
-        });
-    } else {
-        tag.scrollTo({
-            top: tag.scrollHeight,
-            behavior: 'smooth',
-        });
-    }
-}
-
-function getTimeNow() {
-    const currentDate = new Date();
-    let hours = currentDate.getHours();
-    let minutes = currentDate.getMinutes();
-
-    // При необходимости отформатируйте часы и минуты с ведущими нулями
-    if (hours < 10) {
-        hours = "0" + hours;
-    }
-    if (minutes < 10) {
-        minutes = "0" + minutes;
-    }
-
-    return hours + ":" + minutes;
-}
-
 function markMessagesAsRead(chatUUID) {
     const markAsReadUrl = `/inbox/notifications/mark-all-as-read/`;
     const xhr = new XMLHttpRequest();
@@ -231,7 +201,6 @@ function markMessagesAsRead(chatUUID) {
     };
     xhr.send();
 }
-
 
 const chatContent = $('#chat-content');
 const chatList = $('#chat-list');

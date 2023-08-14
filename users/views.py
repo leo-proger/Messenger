@@ -57,7 +57,7 @@ def user_profile_view(request, user_id):
 	user = get_object_or_404(User, id=user_id)
 
 	if request.method == 'POST':
-		post_form = PostForm(request.POST or None, request.FILES or None)
+		post_form = PostForm(request.POST, request.FILES)
 		if post_form.is_valid():
 			post = post_form.save(commit=False)
 			post.user = request.user
@@ -80,7 +80,7 @@ def user_profile_view(request, user_id):
 		'user_posts': user.user_posts.all(),
 		'user_online': user_online,
 
-		'form': post_form,
+		'post_form': post_form,
 		}
 
 	return render(request, 'users/user_profile.html', context)

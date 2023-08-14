@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="{% static 'users/css/user_profile_styles.css' %}">
 {% endblock links %}
 
+{% block end_scripts %}
+  <script src="{% static 'users/js/user_profile.js' %}"></script>
+{% endblock end_scripts %}
+
 {% block content %}
   {# Секция профиля пользователя #}
   <section id="profile-section" class="col position-relative">
@@ -17,7 +21,7 @@
     <div class="row">
       <div class="col-12 col-lg-8">
         {#  Информационная секция пользователя #}
-        <section id="info-section" class="row align-items-center mx-2 my-4 mb-0 p-3 hover-scale">
+        <section id="info-section" class="row align-items-center mx-1 mx-md-2 my-4 mb-0 p-3 hover-scale">
           {# Фото пользователя #}
           <div id="profile-image" class="col-12 col-lg-3 mx-auto mx-lg-0">
             <img src="{{ user_profile_image.url }}" alt="" class="img-fluid rounded-circle">
@@ -27,9 +31,9 @@
           <div class="col-12 col-lg d-flex justify-content-center justify-content-lg-start">
             <div class="row flex-column">
               <h1 id="name"
-                  class="col-12 col-lg my-2 my-lg-0 d-flex justify-content-center justify-content-lg-start">{{ user_full_name }}</h1>
+                  class="col-12 col-lg my-2 my-lg-0 d-flex justify-content-center justify-content-lg-start text-lg-start">{{ user_full_name }}</h1>
               <span id="online-status"
-                    class="col-12 col-lg d-flex justify-content-center justify-content-lg-start mb-2">{{ user_online|last_online_formatter }}</span>
+                    class="col-12 col-lg d-flex justify-content-center justify-content-lg-start mb-2 text-lg-start">{{ user_online|last_online_format }}</span>
             </div>
           </div>
 
@@ -49,7 +53,7 @@
 
         {# Биография пользователя #}
         {% if user_biography %}
-          <div id="bio" class="row mx-2 my-3 p-2 hover-scale">
+          <div id="bio" class="row mx-1 mx-md-2 my-3 p-2 hover-scale">
             <p class="col">{{ user_biography }}</p>
           </div>
         {% endif %}
@@ -58,7 +62,7 @@
       <div class="col-12 col-lg-4">
         {# Секция друзей пользователя #}
         <section id="friends"
-                 class="row flex-column mx-2 ms-lg-0 me-lg-2 p-2 hover-scale {% if user_biography %}mb-3 mt-lg-4{% else %}my-3{% endif %}">
+                 class="row flex-column mx-1 mx-md-2 ms-lg-0 me-lg-2 p-2 hover-scale {% if user_biography %}mb-3 mt-lg-4{% else %}my-3{% endif %}">
           <header id="friend-section-title" class="col">
             <h4>Друзья:</h4>
           </header>
@@ -68,12 +72,12 @@
               <li class="friend">
                 <div class="row d-flex justify-content-start align-items-center">
                   <div class="col-auto">
-                    <div class="friend-image">
+                    <div class="friend__image">
                       <img src="{{ user_profile_image.url }}" alt="" class="rounded-circle">
                     </div>
                   </div>
                   <div class="col-auto">
-                    <h5 class="friend-name">Елена Красавина</h5>
+                    <h5 class="friend__name">Елена Красавина</h5>
                   </div>
                 </div>
               </li>
@@ -86,47 +90,49 @@
       </div>
 
       {% if request.user.id == user_id %}
-        <div class="col-12 col-lg-8">
-          <div id="add-post-buttons" class="row mx-2">
-            <div class="col-12 col-sm p-0 hover-scale">
-              {# Кнопка добавления фото с модальным окном #}
-              <button id="add-image-button" data-bs-toggle="modal" data-bs-target="#addImageModal">Добавить фото
-              </button>
-            </div>
-            <div class="col-12 col-sm p-0 hover-scale">
-              {# Кнопка добавления записи с модальным окном #}
-              <button id="add-note-button" data-bs-toggle="modal" data-bs-target="#addNoteModal">Добавить запись
-              </button>
-            </div>
-          </div>
+        <div class="col-12 col-lg-8 mx-1 mx-md-2">
+          <form method="post" enctype="multipart/form-data" class="position-relative">
+            {% csrf_token %}
+            {{ post_form }}
+            <i id="create-post__image-icon" class="fa-duotone fa-camera"></i>
+            <button type="submit" id="create-post__publish-button"><i class="fa-solid fa-paper-plane-top"></i></button>
+            <img src="" alt="" id="preview_image" style="max-width: 200px; max-height: 200px;">
+          </form>
         </div>
       {% endif %}
 
-      <div class="col-12 col-lg-8">
-        <section id="posts" class="row flex-column mx-2 my-4 p-2" style="height: calc(100vh - 340px); overflow-y: auto;">
-          {% for post in user_posts %}
-            <div class="col my-2 hover-scale post">
-              <div class="row flex-column">
-                {% if post.text %}
-                  <div class="col-2">
-                    <p>{{ post.text }}</p>
+      {% if user_posts %}
+        <div class="col-12 col-lg-8 d-flex justify-content-center">
+          <section id="posts" class="row flex-column mx-2 my-4">
+            {% for post in user_posts %}
+              <div class="col mb-3 p-0 post hover-scale">
+
+                <div class="post__text-info mx-2 my-1">
+                  <div class="post__time">
+                    <p>{{ post.created|post_date_format }}</p>
                   </div>
-                {% endif %}
+
+                  {% if post.text %}
+                    <div class="post__text">
+                      <p>{{ post.text }}</p>
+                    </div>
+                  {% endif %}
+                </div>
 
                 {% if post.image %}
-                  <div class="col">
-                    <img src="{{ post.image.url }}" alt="" class="img-fluid">
+                  <div class="post__image">
+                    <img src="{{ post.image.url }}" alt="Фото поста" class="img-fluid">
                   </div>
                 {% endif %}
               </div>
-            </div>
-          {% endfor %}
-        </section>
-      </div>
+            {% endfor %}
+          </section>
+        </div>
+      {% endif %}
     </div>
   </section>
 
-  <!-- Модальное окно для добавления фото -->
+  {# Модальное окно для добавления фото #}
   <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -149,7 +155,7 @@
   </div>
 
 
-  <!-- Модальное окно для добавления записи -->
+  {# Модальное окно для добавления записи  #}
   <div class="modal fade" id="addNoteModal" tabindex="-1" aria-labelledby="addNoteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -158,7 +164,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <!-- Здесь можно разместить форму для ввода текста -->
+          {# Здесь можно разместить форму для ввода текста #}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>

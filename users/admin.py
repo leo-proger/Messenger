@@ -8,6 +8,7 @@ from users.models import UserProfile, ConnectionHistory, Post
 User = get_user_model()
 
 
+@admin.register(User)
 class CustomUserAdmin(admin.ModelAdmin):
 	def profile_link(self, obj):
 		url = "/admin/users/userprofile/{}/".format(obj.user_profile.id)
@@ -29,13 +30,14 @@ class CustomUserAdmin(admin.ModelAdmin):
 	inlines = [ChatInline]
 
 
+@admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
 	ordering = ('user__email',)
 
 
-admin.site.register(User, CustomUserAdmin)
-admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(ConnectionHistory)
+@admin.register(ConnectionHistory)
+class ConnectionHistoryAdmin(admin.ModelAdmin):
+	pass
 
 
 @admin.register(Post)

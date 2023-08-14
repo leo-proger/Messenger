@@ -56,3 +56,24 @@ class PostForm(forms.ModelForm):
 	class Meta:
 		model = Post
 		fields = ['text', 'image']
+		labels = {
+			'text': '',
+			'image': '',
+			}
+		widgets = {
+			'text': forms.Textarea(attrs={'id': 'create-post__text'}),
+			'image': forms.FileInput(attrs={
+				'id': 'create-post__image',
+				'style': 'display: none'
+				}),
+			}
+
+	def clean(self):
+		cleaned_data = super().clean()
+		text = cleaned_data.get('text')
+		image = cleaned_data.get('image')
+
+		if not text and not image:
+			raise ValidationError(_('Пост не может быть пустым'))
+
+		return cleaned_data

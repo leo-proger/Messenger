@@ -16,7 +16,7 @@ def plural_form(n, forms):
 
 
 @register.filter
-def last_online_formatter(last_online_time):
+def last_online_format(last_online_time):
 	try:
 		# Получаем текущее время
 		now = timezone.now()
@@ -73,3 +73,34 @@ def last_online_formatter(last_online_time):
 	except TypeError:
 		# Если last_online_time не является датой/временем, возвращаем 'online'
 		return 'online'
+
+
+@register.filter
+def post_date_format(value):
+	months = {
+		1: 'янв',
+		2: 'фев',
+		3: 'мар',
+		4: 'апр',
+		5: 'май',
+		6: 'июн',
+		7: 'июл',
+		8: 'авг',
+		9: 'сен',
+		10: 'окт',
+		11: 'ноя',
+		12: 'дек'
+		}
+	now = timezone.now()
+	if value.date() == now.date():
+		time_str = value.strftime('%H:%M')
+		if time_str.startswith('0'):
+			time_str = time_str[1:]
+		return 'Сегодня в {}'.format(time_str)
+	elif value.date() == now.date() - timezone.timedelta(days=1):
+		time_str = value.strftime('%H:%M')
+		if time_str.startswith('0'):
+			time_str = time_str[1:]
+		return 'Вчера в {}'.format(time_str)
+	else:
+		return '{} {} {}'.format(value.day, months[value.month], value.strftime('%H:%M'))

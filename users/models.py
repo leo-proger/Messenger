@@ -1,6 +1,6 @@
 import os
 
-import uuid as uuid
+import uuid
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.exceptions import ValidationError
@@ -14,10 +14,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 def validate_file_size(value):
 	filesize = value.size
-
-	# Определите максимальный допустимый размер файла (в байтах)
 	max_size = 10 * 1024 * 1024  # 10 МБ
-
 	if filesize > max_size:
 		raise ValidationError("Размер файла превышает максимально допустимый размер (10 МБ).")
 
@@ -48,22 +45,32 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-	email = models.EmailField(max_length=255, unique=True, verbose_name=_('Электронная почта'))
-	first_name = models.CharField(max_length=30, verbose_name=_('Имя'))
-	last_name = models.CharField(max_length=30, verbose_name=_('Фамилия'))
-
-	is_active = models.BooleanField(default=True)
-	is_staff = models.BooleanField(default=False)
-
+	email = models.EmailField(
+		max_length=255,
+		unique=True,
+		verbose_name=_('Электронная почта')
+		)
+	first_name = models.CharField(
+		max_length=30,
+		verbose_name=_('Имя')
+		)
+	last_name = models.CharField(
+		max_length=30,
+		verbose_name=_('Фамилия')
+		)
+	is_active = models.BooleanField(
+		default=True
+		)
+	is_staff = models.BooleanField(
+		default=False
+		)
 	user_permissions = models.ManyToManyField(
 		'auth.Permission',
 		blank=True,
 		verbose_name=_('Права пользователя'),
 		related_name='customuser_permissions',
 		)
-
 	objects = CustomUserManager()
-
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = ['first_name', 'last_name']
 
@@ -85,7 +92,6 @@ class UserProfile(models.Model):
 		on_delete=models.CASCADE,
 		related_name='user_profile',
 		)
-	# При поиске будет не id пользователя, а username
 	username = models.CharField(
 		max_length=40,
 		unique=True,
@@ -133,19 +139,30 @@ class UserProfile(models.Model):
 		return self.user.email
 
 
-class Post(models.Model):
-	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_posts')
-	text = models.TextField(blank=True, null=True)
-	image = models.ImageField(upload_to=get_post_image_path, blank=True, null=True)
-	created = models.DateTimeField(auto_now_add=True)
-
-
 class ConnectionHistory(models.Model):
-	user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='connection_history')
-	device_id = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name=_('id устройства'))
-	date_joined = models.DateField(auto_now_add=True, verbose_name=_('Дата регистрации'))
-	last_online = models.DateTimeField(auto_now=True, null=True, blank=True, verbose_name=_('Время последнего входа'))
-	online_status = models.BooleanField(default=False)
+	user = models.OneToOneField(
+		CustomUser,
+		on_delete=models.CASCADE,
+		related_name='connection_history'
+		)
+	device_id = models.UUIDField(
+		default=uuid.uuid4,
+		editable=False,
+		verbose_name=_('id устройства')
+		)
+	date_joined = models.DateField(
+		auto_now_add=True,
+		verbose_name=_('Дата регистрации')
+		)
+	last_online = models.DateTimeField(
+		auto_now=True,
+		null=True,
+		blank=True,
+		verbose_name=_('Время последнего входа')
+		)
+	online_status = models.BooleanField(
+		default=False
+		)
 
 	class Meta:
 		verbose_name = _('История подключений')
@@ -158,3 +175,36 @@ class ConnectionHistory(models.Model):
 		self.online_status = online_status
 		self.last_online = timezone.now()
 		self.save(update_fields=['online_status', 'last_online'])
+
+
+class Post(models.Model):
+	user = models.ForeignKey(
+		CustomUser,
+		on_delete=models.CASCADE,
+		related_name='user_posts',
+		verbose_name=_('Создатель поста'),
+		)
+	text = models.CharField(
+		max_length=500,
+		blank=True,
+		null=True,
+		verbose_name=_('Текст поста'),
+		)
+	image = models.ImageField(
+		upload_to=get_post_image_path,
+		blank=True,
+		null=True,
+		verbose_name=_('Изображение поста'),
+		)
+	created = models.DateTimeField(
+		auto_now_add=True,
+		verbose_name=_('Время создания'),
+		)
+
+	class Meta:
+		ordering = ['-created']
+		verbose_name = _('Пост')
+		verbose_name_plural = _('Посты')
+
+	def __str__(self):
+		return self.id

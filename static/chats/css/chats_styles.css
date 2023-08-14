@@ -102,7 +102,7 @@
 /* ===== ===== */
 
 .active-chat {
-  background-color: var(--gray3);
+  background-color: var(--lightblack);
 }
 
 /* Фото чатов */
@@ -222,7 +222,7 @@
 .message-input-container {
   height: 69px;
   border-top: 2px solid var(--gray2);
-  background-color: var(--gray3);
+  background-color: var(--lightblack);
 }
 
 .message-input {
@@ -262,7 +262,7 @@
   border-bottom-right-radius: 5px;
   background-color: #333;
   color: #fff;
-  transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition: all 0.2s ease-out;
 }
 
 .send-button:hover {
