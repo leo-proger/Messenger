@@ -49,7 +49,7 @@ class UserProfileForm(forms.ModelForm):
 
 
 class MessageForm(forms.Form):
-	text = forms.CharField(label=_('Текст сообщение'), widget=forms.Textarea(attrs={'rows': 3}))
+	text = forms.CharField(label=_('Текст сообщение'), widget=forms.Textarea())
 
 
 class PostForm(forms.ModelForm):
@@ -61,10 +61,14 @@ class PostForm(forms.ModelForm):
 			'image': '',
 			}
 		widgets = {
-			'text': forms.Textarea(attrs={'id': 'create-post__text'}),
+			'text': forms.Textarea(attrs={
+				'id': 'create-post__input-text',
+				'placeholder': 'Текст поста',
+				'rows': '1',
+				}),
 			'image': forms.FileInput(attrs={
-				'id': 'create-post__image',
-				'style': 'display: none'
+				'id': 'create-post__select-image',
+				'style': 'display: none',
 				}),
 			}
 
@@ -77,3 +81,22 @@ class PostForm(forms.ModelForm):
 			raise ValidationError(_('Пост не может быть пустым'))
 
 		return cleaned_data
+
+
+class EditProfileForm(forms.ModelForm):
+	email = forms.EmailField()
+	new_password = forms.CharField(label='Новый пароль', widget=forms.PasswordInput)
+	current_password = forms.CharField(label='Текущий пароль', widget=forms.PasswordInput)
+	confirm_password = forms.CharField(label='Подтвердите пароль', widget=forms.PasswordInput)
+
+	first_name = forms.CharField(
+		max_length=50,
+		)
+	last_name = forms.CharField(
+		max_length=50,
+		)
+
+	class Meta:
+		model = UserProfile
+		fields = ['profile_image', 'biography', 'username', 'age', 'city', 'phone_number', 'email', 'new_password',
+		          'current_password', 'confirm_password', ]

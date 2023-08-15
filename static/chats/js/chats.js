@@ -187,21 +187,6 @@ function searchContact(value) {
     noResultsMessage.toggleClass('d-none', hasResults);
 }
 
-function markMessagesAsRead(chatUUID) {
-    const markAsReadUrl = `/inbox/notifications/mark-all-as-read/`;
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', markAsReadUrl, true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            const chatElement = document.getElementById(chatUUID).querySelector('.unread-messages-count');
-            if (chatElement !== null) {
-                chatElement.remove();
-            }
-        }
-    };
-    xhr.send();
-}
-
 const chatContent = $('#chat-content');
 const chatList = $('#chat-list');
 

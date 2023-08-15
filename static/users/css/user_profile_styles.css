@@ -119,7 +119,7 @@
 /* ========== ==========*/
 
 /* ========== Блок создания поста ========== */
-#create-post__text {
+#create-post__input-text {
   width: 98%;
   min-height: 50px;
   height: 50px;
@@ -130,22 +130,24 @@
   border: 2px solid var(--lightgray);
   background-color: var(--lightblack);
   color: var(--white);
-  resize: vertical;
+  resize: none;
   overflow-y: auto;
+
+  transition: all 0.2s ease-out;
 }
 
-#create-post__image-icon, #create-post__publish-button {
+#create-post__select-image-icon, #create-post__publish-button {
   position: absolute;
   top: 5px;
   font-size: 23px;
   transition: all 0.2s ease-out;
 }
 
-#create-post__image-icon:hover, #create-post__publish-button:hover {
+#create-post__select-image-icon:hover, #create-post__publish-button:hover {
   transform: scale(0.90);
 }
 
-#create-post__image-icon {
+#create-post__select-image-icon {
   right: 75px;
   top: 13px;
   cursor: pointer;
@@ -156,6 +158,28 @@
   background-color: transparent;
   color: var(--white);
   border: none;
+}
+
+.preview-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 10px;
+}
+
+.delete-uploaded-image-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  border: none;
+  border-bottom-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  transition: background-color 0.2s ease-out;
+}
+
+.delete-uploaded-image-button:hover {
+  background-color: rgba(255, 255, 255, 1);
 }
 
 /* ========== ==========*/

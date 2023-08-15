@@ -20,14 +20,14 @@
 
   {% if chat_content %}
     <script>
-        let chatUUID = '{{ chat_uuid|escapejs }}';
+        chatUUID = '{{ chat_uuid|escapejs }}';
 
         initialize(chatUUID);
         scrollDown(document.getElementById('chat-messages'));
     </script>
   {% else %}
     <script>
-        let chatUUID = '';
+        chatUUID = '';
     </script>
   {% endif %}
 {% endblock end_scripts %}

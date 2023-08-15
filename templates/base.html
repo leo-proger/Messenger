@@ -63,10 +63,10 @@
 
 <script>
   let currentUserID = {{ current_user_id }};
+  let chatUUID = '';
 </script>
 
 {% block end_scripts %}{% endblock end_scripts %}
-
 
 <script src="{% static 'chats/js/message_notifications.js' %}"></script>
 <script src="{% static 'users/js/online_status.js' %}"></script>

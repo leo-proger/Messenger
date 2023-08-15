@@ -12,32 +12,34 @@ NotifySocket.onmessage = function (event) {
         const receivedChatUUID = data.chat_uuid;
         const lastChatMessage = data.last_chat_message;
 
-        if (chatUUID !== receivedChatUUID) {
-            const chat = document.getElementById(receivedChatUUID);
-            const unreadMessagesCount = chat?.querySelector('.unread-messages-count > span');
+        if (chatUUID) {
+            if (chatUUID !== receivedChatUUID) {
+                const chat = document.getElementById(receivedChatUUID);
+                const unreadMessagesCount = chat?.querySelector('.unread-messages-count > span');
 
-            if (unreadMessagesCount) {
-                const count = parseInt(unreadMessagesCount.textContent, 10);
-                unreadMessagesCount.textContent = `${count + 1}`;
+                if (unreadMessagesCount) {
+                    const count = parseInt(unreadMessagesCount.textContent, 10);
+                    unreadMessagesCount.textContent = `${count + 1}`;
+                } else {
+                    const span = document.createElement('span');
+                    span.textContent = '1';
+                    const unreadMessagesCountElement = document.createElement('div');
+                    unreadMessagesCountElement.classList.add('text-center', 'my-1', 'unread-messages-count');
+                    unreadMessagesCountElement.appendChild(span);
+                    const messageInfo = chat?.querySelector('.message-info');
+                    messageInfo.appendChild(unreadMessagesCountElement);
+                }
+
+                const lastChatMessageElement = chat.querySelector('.chat-info > p');
+                lastChatMessageElement.textContent = lastChatMessage;
+
+                const timeLastChatMessage = chat?.querySelector('.time-last-message');
+                timeLastChatMessage.textContent = getTimeNow();
+
+                prependChat(receivedChatUUID);
             } else {
-                const span = document.createElement('span');
-                span.textContent = '1';
-                const unreadMessagesCountElement = document.createElement('div');
-                unreadMessagesCountElement.classList.add('text-center', 'my-1', 'unread-messages-count');
-                unreadMessagesCountElement.appendChild(span);
-                const messageInfo = chat?.querySelector('.message-info');
-                messageInfo.appendChild(unreadMessagesCountElement);
+                markMessagesAsRead(chatUUID);
             }
-
-            const lastChatMessageElement = chat.querySelector('.chat-info > p');
-            lastChatMessageElement.textContent = lastChatMessage;
-
-            const timeLastChatMessage = chat?.querySelector('.time-last-message');
-            timeLastChatMessage.textContent = getTimeNow();
-
-            prependChat(receivedChatUUID);
-        } else {
-            markMessagesAsRead(chatUUID);
         }
     }
 };
