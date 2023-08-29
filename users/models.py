@@ -58,6 +58,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 		max_length=30,
 		verbose_name=_('Фамилия')
 		)
+	phone_number = PhoneNumberField(
+		unique=True,
+		null=True,
+		blank=True,
+		verbose_name=_('Номер телефона'),
+		)
 	is_active = models.BooleanField(
 		default=True
 		)
@@ -114,15 +120,10 @@ class UserProfile(models.Model):
 		verbose_name=_('Возраст'),
 		)
 	biography = models.TextField(
+		max_length=500,
 		blank=True,
 		null=True,
 		verbose_name=_('Биография'),
-		)
-	phone_number = PhoneNumberField(
-		unique=True,
-		null=True,
-		blank=True,
-		verbose_name=_('Номер телефона'),
 		)
 	city = models.CharField(
 		blank=True,
@@ -185,7 +186,7 @@ class Post(models.Model):
 		verbose_name=_('Создатель поста'),
 		)
 	text = models.CharField(
-		max_length=500,
+		max_length=100,
 		blank=True,
 		null=True,
 		verbose_name=_('Текст поста'),

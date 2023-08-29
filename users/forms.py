@@ -73,30 +73,19 @@ class PostForm(forms.ModelForm):
 			}
 
 	def clean(self):
-		cleaned_data = super().clean()
-		text = cleaned_data.get('text')
-		image = cleaned_data.get('image')
+		text = self.cleaned_data.get('text')
+		image = self.cleaned_data.get('image')
 
 		if not text and not image:
 			raise ValidationError(_('Пост не может быть пустым'))
 
-		return cleaned_data
+		return self.cleaned_data
 
 
 class EditProfileForm(forms.ModelForm):
-	email = forms.EmailField()
-	new_password = forms.CharField(label='Новый пароль', widget=forms.PasswordInput)
-	current_password = forms.CharField(label='Текущий пароль', widget=forms.PasswordInput)
-	confirm_password = forms.CharField(label='Подтвердите пароль', widget=forms.PasswordInput)
-
-	first_name = forms.CharField(
-		max_length=50,
-		)
-	last_name = forms.CharField(
-		max_length=50,
-		)
+	first_name = forms.CharField(max_length=30)
+	last_name = forms.CharField(max_length=30)
 
 	class Meta:
 		model = UserProfile
-		fields = ['profile_image', 'biography', 'username', 'age', 'city', 'phone_number', 'email', 'new_password',
-		          'current_password', 'confirm_password', ]
+		fields = ('first_name', 'last_name', 'profile_image', 'biography', 'username', 'age', 'city')

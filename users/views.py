@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
-from .forms import UserRegistrationForm, LoginForm, PostForm
+from .forms import UserRegistrationForm, LoginForm, PostForm, EditProfileForm
 
 User = get_user_model()
 
@@ -58,11 +58,12 @@ def user_profile_view(request, user_id):
 
 	if request.method == 'POST':
 		post_form = PostForm(request.POST, request.FILES)
+
 		if post_form.is_valid():
 			post = post_form.save(commit=False)
 			post.user = request.user
 			post.save()
-			return redirect('users:profile', user_id=user.pk)
+			return redirect('users:profile', user_id=user_id)
 	else:
 		post_form = PostForm()
 
@@ -84,3 +85,27 @@ def user_profile_view(request, user_id):
 		}
 
 	return render(request, 'users/user_profile.html', context)
+
+
+def edit_profile(request, user_id):
+	user = get_object_or_404(User, id=user_id)
+	user_profile = user.user_profile
+
+	if request.method == 'POST':
+		edit_profile_form = EditProfileForm(request.POST, request.FILES, instance=user_profile)
+
+		if edit_profile_form.is_valid():
+			edit_profile_form.save()
+			return redirect('users:profile', user_id=user_id)
+	else:
+		edit_profile_form = EditProfileForm(instance=user_profile, initial={
+			'first_name': user.first_name,
+			'last_name': user.last_name,
+			})
+
+	context = {
+		'user_id': user_id,
+		'edit_profile_form': edit_profile_form,
+		}
+
+	return render(request, 'users/edit_profile.html', context)

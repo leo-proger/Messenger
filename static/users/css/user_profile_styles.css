@@ -34,36 +34,20 @@
   font-size: var(--small-font);
 }
 
-/* ===== Кнопки для редактирования профиля и отправки заявки в друзья ===== */
+/* ===== Кнопка редактирования профиля и отправка заявки в друзья ===== */
 .profile-button {
-  width: 200px;
-  text-decoration: none;
-  color: var(--white);
-  font-size: 15px;
+  background-color: transparent;
   border: 2px solid var(--gray);
-  border-radius: 8px;
-  transition: background-color 0.2s ease-out;
+  border-radius: 10px;
+  color: var(--color-text);
+  font-size: var(--normal-font);
+
+  transition: all 0.2s ease-out;
 }
 
 .profile-button:hover {
-  background-color: var(--white);
-}
-
-.profile-button a {
-  text-decoration: none;
-  color: var(--white);
-  font-size: var(--normal-font);
-  transition: color 0.2s ease-out;
-}
-
-.profile-button:hover a, .profile-button:hover a i {
   color: var(--black);
-}
-
-.profile-button a i {
-  font-size: 14px;
-  color: var(--white);
-  transition: color 0.2s ease-out;
+  background-color: var(--white);
 }
 
 /* ===== ===== */

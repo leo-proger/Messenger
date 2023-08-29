@@ -40,14 +40,11 @@
           {# Кнопка добавления в друзья или редактирования профиля #}
           <div class="col d-flex justify-content-center justify-content-sm-end">
             {% if request.user.id == user_id %}
-              <div class="text-center p-1 profile-button">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#editProfileModal">Редактировать профиль <i
-                  class="fa-duotone fa-pen-to-square"></i></button>
-              </div>
+              <button class="p-1 profile-button" onclick="location.href='{% url 'users:edit-profile' user_id %}'">
+                Редактировать профиль <i class="fa-duotone fa-pen-to-square"></i>
+              </button>
             {% else %}
-              <div class="text-center p-1 profile-button">
-                <a href="#">Заявка в друзья <i class="fa-solid fa-user-group"></i></a>
-              </div>
+              <a href="#">Заявка в друзья <i class="fa-solid fa-user-group"></i></a>
             {% endif %}
           </div>
         </section>
@@ -63,7 +60,7 @@
       {# Друзья пользователя #}
       <div class="col-12 col-lg-4">
         <section id="friends"
-                 class="row flex-column mx-1 mx-md-2 ms-lg-0 me-lg-2 p-2 hover-scale {% if user_biography %}mb-3 mt-lg-4{% else %}my-3{% endif %}">
+                 class="row flex-column mx-1 mx-md-2 ms-lg-0 me-lg-2 p-2 hover-scale {% if user_biography %}mb-3 mt-lg-4{% else %}my-3 mb-lg-0{% endif %}">
           <header id="friend-section-title" class="col">
             <h4>Друзья:</h4>
           </header>
@@ -93,13 +90,14 @@
       {# Создание поста #}
       {% if request.user.id == user_id %}
         <div class="col-12 col-lg-8 mx-1 mx-md-2">
-          <form method="post" enctype="multipart/form-data"
-                class="position-relative">
+          <form method="post" enctype="multipart/form-data" class="position-relative">
             {% csrf_token %}
             {{ post_form }}
             <i id="create-post__select-image-icon" class="fa-duotone fa-camera" title="Добавить фото"></i>
-            <button type="submit" id="create-post__publish-button" title="Опубликовать"><i
-              class="fa-solid fa-paper-plane-top"></i></button>
+
+            <button type="submit" id="create-post__publish-button" title="Опубликовать">
+              <i class="fa-solid fa-paper-plane-top"></i>
+            </button>
 
             <div class="mt-2 position-relative d-inline-block">
               <img src="" alt="" class="preview-image">
@@ -107,6 +105,7 @@
                 <i class="fa-regular fa-xmark"></i>
               </button>
             </div>
+            {{ post_form.errors }}
           </form>
         </div>
       {% endif %}
@@ -147,21 +146,25 @@
     </div>
   </section>
 
-  {# Модальное окно #}
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  {# Модальное окно редактирования профиля #}
+  <div class="modal fade text-white" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+       aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Заголовок модального окна</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-        </div>
-        <div class="modal-body">
-          ...
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-          <button type="button" class="btn btn-primary">Сохранить изменения</button>
-        </div>
+      <div class="modal-content bg-dark">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Редактирование профиля</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body">
+            {{ edit_profile_form.as_div }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
