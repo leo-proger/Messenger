@@ -1,0 +1,86 @@
+:root {
+  --darkgray: #24272b;
+  --lightgray: #b7b7b7;
+  --gray: #5b5b5b;
+  --gray2: #495057;
+  --lightblack: #222222;
+  --black: #111112;
+  /*--lightblack: #232325;*/
+  --white: #ececec;
+  --blue: #1976d2;
+
+  --small-font: 13px;
+  --normal-font: 14px;
+  --medium-font: 17px;
+  --big-font: 20px;
+
+  --small-img: 35px;
+
+  --color-text: #d5d5d5;
+}
+
+/* ===== Стили для линии прокрутки ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Стили для ползунка прокрутки */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+/* ===== ===== */
+
+html, body {
+  font-family: 'Open Sans', 'Roboto', sans-serif;
+  height: 100%;
+  width: 100%;
+  min-width: 280px;
+  margin: 0;
+  padding: 0;
+  background-color: var(--darkgray);
+  color: var(--color-text);
+}
+
+.main-row {
+  height: 100vh;
+  max-width: 1200px;
+}
+
+/* ========== Навигационная панель ========== */
+#main-navbar {
+  width: 70px;
+  border-right: 2px solid var(--gray2);
+}
+
+.nav-link > i {
+  color: var(--lightgray);
+  font-size: 22px;
+
+  transition: color 0.2s ease-out;
+}
+
+.nav-link > i:hover {
+  color: var(--blue);
+}
+
+.user-image {
+  transition: transform 0.2s ease-out, box-shadow 0.4s ease;
+}
+
+.user-image:hover {
+  transform: scale(0.96);
+  box-shadow: 0 0 15px 8px rgba(236, 236, 236, 0.7);
+}
+
+/* ========== ========== */
+
+.hover-scale {
+  transition: all 0.2s ease-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}

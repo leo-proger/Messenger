@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load users_custom_filters %}
+
+{% block title %}
+  {{ user_full_name }}
+{% endblock %}
+
+{% block links %}
+  <link rel="stylesheet" href="{% static 'users/css/user_profile_styles.css' %}">
+{% endblock links %}
+
+{% block end_scripts %}
+  <script src="{% static 'users/js/user_profile.js' %}"></script>
+{% endblock end_scripts %}
+
+{% block content %}
+  {# Секция профиля пользователя #}
+  <section id="profile-section" class="col position-relative">
+
+    <div class="row">
+      <div class="col-12 col-lg-8">
+        {#  Информационная секция пользователя #}
+        <section id="info-section" class="row align-items-center mx-1 mx-md-2 mt-4 p-3 hover-scale">
+          {# Фото пользователя #}
+          <div id="profile-image" class="col-12 col-sm-3 mx-auto mx-sm-0">
+            <img src="{{ user_profile_image.url }}" alt="" class="img-fluid rounded-circle">
+          </div>
+
+          {# Имя и онлайн статус пользователя #}
+          <div class="col-12 col-sm d-flex justify-content-center justify-content-sm-start">
+            <div class="row flex-column">
+              <h1 id="name"
+                  class="col my-2 my-sm-0 d-flex justify-content-center justify-content-sm-start">{{ user_full_name }}</h1>
+              <span id="online-status"
+                    class="col-12 col-sm mb-2 d-flex justify-content-center justify-content-sm-start">{{ user_online|last_online_format }}</span>
+            </div>
+          </div>
+
+          {# Кнопка добавления в друзья или редактирования профиля #}
+          <div class="col d-flex justify-content-center justify-content-sm-end">
+            {% if request.user.id == user_id %}
+              <button class="p-1 profile-button" onclick="location.href='{% url 'users:edit-profile' user_id %}'">
+                Редактировать профиль <i class="fa-duotone fa-pen-to-square"></i>
+              </button>
+            {% else %}
+              <a href="#">Заявка в друзья <i class="fa-solid fa-user-group"></i></a>
+            {% endif %}
+          </div>
+        </section>
+
+        {# Биография пользователя #}
+        {% if user_biography %}
+          <div id="bio" class="row mx-1 mx-md-2 my-3 p-2 hover-scale">
+            <p class="col">{{ user_biography }}</p>
+          </div>
+        {% endif %}
+      </div>
+
+      {# Друзья пользователя #}
+      <div class="col-12 col-lg-4">
+        <section id="friends"
+                 class="row flex-column mx-1 mx-md-2 ms-lg-0 me-lg-2 p-2 hover-scale {% if user_biography %}mb-3 mt-lg-4{% else %}my-3 mb-lg-0{% endif %}">
+          <header id="friend-section-title" class="col">
+            <h4>Друзья:</h4>
+          </header>
+          <main class="col">
+            <ul id="list-friends" class="p-0 mt-2">
+              {# Отдельный друг #}
+              <li class="friend">
+                <div class="row d-flex justify-content-start align-items-center">
+                  <div class="col-auto">
+                    <div class="friend__image">
+                      <img src="{{ user_profile_image.url }}" alt="" class="rounded-circle">
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <h5 class="friend__name">Елена Красавина</h5>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </main>
+          <footer>
+            <a id="show-more-friends" href="#">Показать всех</a>
+          </footer>
+        </section>
+      </div>
+
+      {# Создание поста #}
+      {% if request.user.id == user_id %}
+        <div class="col-12 col-lg-8 mx-1 mx-md-2">
+          <form method="post" enctype="multipart/form-data" class="position-relative">
+            {% csrf_token %}
+            {{ post_form }}
+            <i id="create-post__select-image-icon" class="fa-duotone fa-camera" title="Добавить фото"></i>
+
+            <button type="submit" id="create-post__publish-button" title="Опубликовать">
+              <i class="fa-solid fa-paper-plane-top"></i>
+            </button>
+
+            <div class="mt-2 position-relative d-inline-block">
+              <img src="" alt="" class="preview-image">
+              <button type="button" class="d-none delete-uploaded-image-button" data-filename="" title="Удалить">
+                <i class="fa-regular fa-xmark"></i>
+              </button>
+            </div>
+            {{ post_form.errors }}
+          </form>
+        </div>
+      {% endif %}
+
+      {# Посты пользователя #}
+      {% if user_posts %}
+        <div class="col-12 col-lg-8 d-flex justify-content-center">
+          <section id="posts" class="row flex-column mx-2 my-4">
+            {% for post in user_posts %}
+              <div class="col mb-3 p-0 post hover-scale">
+
+                <div class="post__text-info mx-2 my-1">
+                  <div class="post__time">
+                    <p>{{ post.created|post_date_format }}</p>
+                  </div>
+
+                  {% if post.text %}
+                    <div class="post__text">
+                      <p>{{ post.text }}</p>
+                    </div>
+                  {% endif %}
+                </div>
+
+                {% if post.image %}
+                  <div class="post__image">
+                    <img src="{{ post.image.url }}" alt="Фото поста" class="img-fluid">
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </section>
+        </div>
+      {% else %}
+        <div class="row text-center mt-3">
+          <div class="col">Постов нет</div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  {# Модальное окно редактирования профиля #}
+  <div class="modal fade text-white" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Редактирование профиля</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body">
+            {{ edit_profile_form.as_div }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

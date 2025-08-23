@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Создание чата{% endblock title %}
+
+{% block content %}
+  <h1>Создать чат</h1>
+  <form method="POST" action="{% url 'chats:create_chat' %}">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <input type="submit" value="Создать" style="margin-top: 10px">
+  </form>
+{% endblock %}

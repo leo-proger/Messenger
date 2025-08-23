@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block links %}
+  <link rel="stylesheet" href="{% static 'users/css/edit_profile_styles.css' %}">
+{% endblock links %}
+
+{% block content %}
+  <section id="edit-profile-section" class="col">
+    <div class="row flex-column text-center">
+
+      <div class="col">
+        <form method="post">
+          {% csrf_token %}
+          <div id="info-section" class="row align-items-center mx-2 my-4 p-2 text-center">
+            <div id="profile-image" class="col-3" style="width: 100px">
+              <img src="{{ edit_profile_form.instance.profile_image.url }}" alt="" class="img-fluid rounded-circle">
+            </div>
+
+            <div id="user-name" class="col d-flex justify-content-start">
+              {{ edit_profile_form.first_name }} {{ edit_profile_form.last_name }}
+            </div>
+          </div>
+
+          <div id="profile-bio" class="col">
+            {{ edit_profile_form.biography }}
+          </div>
+
+          <div id="additional-info">
+            <div id="profile-username">
+              {{ edit_profile_form.username }}
+            </div>
+            <div id="profile-age">
+              {{ edit_profile_form.age }}
+            </div>
+            <div id="profile-city">
+              {{ edit_profile_form.city }}
+            </div>
+          </div>
+
+          <button type="submit">Сохранить</button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+{% endblock %}

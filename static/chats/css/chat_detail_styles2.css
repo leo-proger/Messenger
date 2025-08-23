@@ -1,0 +1,225 @@
+/* ---- Оформление линии прокрутки ---- */
+
+/* Стили для линии прокрутки */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Стили для ползунка прокрутки */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Изменение цвета ползунка при наведении */
+::-webkit-scrollbar-thumb:hover {
+  opacity: 1;
+}
+
+/* ---- Оформление окна чата ---- */
+
+.card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  width: 70vw;
+  height: 80vh;
+  margin: 30px auto auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  background-color: #F0F0F0FF;
+  color: black;
+  padding: 10px;
+  font-size: 25px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  text-align: left;
+  height: 40px;
+}
+
+.avatar > img {
+  width: 30px;
+}
+
+.chat-window {
+  overflow-y: auto;
+  color: white;
+  background-color: #3a3a3a;
+  position: relative;
+  flex-grow: 1;
+  width: calc(100% + 1px);
+}
+
+.chat-messages {
+  overflow-y: auto;
+}
+
+.chat-input {
+  width: calc(100% + 1px);
+  height: 45px;
+  display: inline-block;
+  position: relative;
+}
+
+.message-input {
+  position: relative;
+  padding: 12px 60px 12px 12px;
+  box-sizing: border-box;
+  border-radius: 0 0 4px 4px;
+  border: 1px solid rgb(58, 58, 58, 0.5);
+  outline: none;
+  font-size: 14px;
+  background: #e6e6e6;
+  height: 47px;
+  min-height: 47px;
+  max-height: 100px;
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+}
+
+.message-input::placeholder {
+  transition: opacity 0.2s ease-out;
+}
+
+.message-input:focus::placeholder {
+  opacity: 0;
+}
+
+.send-button {
+  border: none;
+  outline: none;
+  background-color: #333;
+  color: #fff;
+  font-size: 17px;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 10px;
+
+  position: absolute;
+  margin-top: 8px;
+  margin-left: -50px;
+
+  transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.send-button:hover {
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Оформление сообщений чата ---- */
+
+.fade-in {
+  opacity: 0;
+  animation: fade-in 0.3s forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.message-group-received {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.message-group-received > div:first-child {
+  margin-top: auto;
+  margin-right: 5px;
+}
+
+.message-group-received > div:last-child {
+  flex-grow: 1;
+}
+
+.message-group-received > div:first-child > img {
+  border-radius: 50%;
+  height: 25px;
+  width: 25px;
+}
+
+.message-received {
+  max-width: 60%;
+  word-break: break-word;
+  margin: 2px 0;
+  display: flex;
+}
+
+.message-received:first-child > .message-received-text {
+  border-top-left-radius: 20px;
+}
+
+.message-received:last-child > .message-received-text {
+  border-bottom-left-radius: 20px;
+}
+
+.message-received-text {
+  padding: 10px;
+  min-height: 20px;
+  background: #878787;
+  border-radius: 4px 20px 20px 4px;
+  text-align: left;
+}
+
+.message-group-sent {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.message-sent {
+  max-width: 60%;
+  word-break: break-word;
+  display: flex;
+  margin: 2px 0 2px auto;
+}
+
+.message-sent-text {
+  background: #0099ff;
+  border-radius: 20px 4px 4px 20px;
+  min-height: 20px;
+  padding: 10px;
+  margin-left: auto;
+  text-align: left;
+}
+
+.message-sent:first-child > .message-sent-text {
+  border-top-right-radius: 20px;
+}
+
+.message-sent:last-child > .message-sent-text {
+  border-bottom-right-radius: 20px;
+}
+
+.message-sent-status {
+  width: 15px;
+  display: flex;
+  margin-left: 5px;
+  font-size: 15px;
+  color: rgba(134, 142, 153, 0.5);
+}
+
+.message-sent-status > img {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-top: auto;
+}
+
+.message-sent-status > i {
+  margin-top: auto;
+}

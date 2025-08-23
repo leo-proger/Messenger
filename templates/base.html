@@ -1,0 +1,74 @@
+{% load static %}
+{% load notifications_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <title>{% block title %}Title{% endblock title %}</title>
+
+  {% load bootstrap5 %}
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
+
+  <link rel="stylesheet" href="{% static 'users/css/base_styles.css' %}" type="text/css">
+  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
+
+  {% block links %}{% endblock links %}
+
+  <script src="{% static 'users/js/base.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+  {% block start_scripts %}{% endblock start_scripts %}
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row main-row mx-xl-auto">
+    {% if request.user.is_authenticated %}
+      <nav id="main-navbar" class="navbar d-none d-sm-flex bg-black flex-column col-2">
+        <ul class="navbar-nav h-100 align-items-center justify-content-center position-fixed">
+          <li class="nav-item mb-1">
+            <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>
+          </li>
+          <li class="nav-item mt-1">
+            <a href="{% url 'chats:chat_list' %}" class="nav-link"><i class="fa-solid fa-messages"></i></a>
+          </li>
+          <li class="nav-item mt-1">
+            <a href="#" class="nav-link"><i class="fa-duotone fa-user-group"></i></a>
+          </li>
+          <li class="nav-item mt-1">
+            <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i></a>
+          </li>
+          <li class="nav-item mt-1">
+            <a href="{% url 'logout' %}" class="nav-link"><i class="fa-solid fa-right-from-bracket"></i></a>
+          </li>
+          <li class="nav-item mt-4" title="Вы: {{ request.user.get_full_name }}">
+            <a href="{% url 'users:profile' current_user_id %}">
+              <img src="{{ current_user_image.url }}" alt="" style="width: 40px; border-radius: 50%"
+                   class="user-image">
+            </a>
+          </li>
+        </ul>
+      </nav>
+    {% endif %}
+
+    {% block content %}{% endblock content %}
+  </div>
+</div>
+
+<script>
+  let currentUserID = {{ current_user_id }};
+  let chatUUID = '';
+</script>
+
+{% block end_scripts %}{% endblock end_scripts %}
+
+<script src="{% static 'chats/js/message_notifications.js' %}"></script>
+<script src="{% static 'users/js/online_status.js' %}"></script>
+</body>
+</html>

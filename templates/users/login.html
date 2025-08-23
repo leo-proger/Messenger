@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Вход{% endblock title %}
+
+{% block links %}
+  <link rel="stylesheet" href="{% static 'users/css/login_styles.css' %}">
+{% endblock links %}
+
+{% block end_scripts %}
+  <script src="{% static 'users/js/login.js' %}" type="text/javascript"></script>
+{% endblock end_scripts %}
+
+{% block content %}
+  <div class="login-box">
+    <p>Вход в аккаунт</p>
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+      <div class="user-box">
+        {{ form.username }}
+        <label>Почта</label>
+      </div>
+      <div class="user-box">
+        {{ form.password }}
+        <label>Пароль</label>
+      </div>
+      <a href="#">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        Войти
+      </a>
+    </form>
+    <p>Нет аккаунта? <a href="{% url 'users:register' %}" class="a2">Зарегистрироваться!</a></p>
+  </div>
+{% endblock content %}

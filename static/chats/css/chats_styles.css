@@ -1,0 +1,384 @@
+.line {
+  width: 100%;
+  border: none;
+  border-top: 2px solid var(--gray2);
+}
+
+.online, .offline {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.online {
+  background-color: lightgreen;
+}
+
+.offline {
+  background-color: var(--lightgray);
+}
+
+/* ========== Список чатов ========== */
+#chat-list {
+  background-color: var(--darkgray);
+  width: 38%;
+  border-right: 2px solid var(--gray2);
+}
+
+.chats-title {
+  color: var(--white);
+}
+
+.chat-actions-icon {
+  width: 20px;
+  height: 40px;
+  position: relative;
+  right: 13px;
+  text-align: center;
+
+}
+
+.chat-actions-icon > a {
+  color: var(--gray);
+  font-size: 24px;
+
+  transition: color 0.2s ease-out;
+}
+
+.chat-actions-icon:hover a {
+  color: var(--lightgray);
+}
+
+/* ===== ===== */
+
+/* ===== Форма поиска чатов ===== */
+.chat-search {
+  border-radius: 20px;
+  background-color: var(--gray2);
+  border: none;
+  height: 40px;
+  width: 97%;
+
+  transition: background-color 0.2s ease-out;
+}
+
+.chat-search::placeholder {
+  color: var(--white);
+
+  transition: opacity 0.2s ease-out;
+}
+
+.chat-search:focus {
+  background-color: var(--white);
+}
+
+.chat-search:focus::placeholder {
+  opacity: 0;
+}
+
+/* ===== ===== */
+
+/* ===== Чат в списке чатов ===== */
+.chat {
+  width: 97%;
+  height: 30%;
+  max-height: 70px;
+  border-radius: 20px;
+  background-color: var(--black);
+  overflow-wrap: break-word;
+
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.chat:hover {
+  transform: scale(0.98);
+}
+
+.chat:active {
+  transform: scale(0.95);
+}
+
+/* ===== ===== */
+
+.active-chat {
+  background-color: var(--lightblack);
+}
+
+/* Фото чатов */
+.chat-image {
+  width: 68px;
+  position: relative;
+}
+
+/* Само фото */
+.chat-image > img {
+  width: 48px;
+}
+
+/* Онлайн (Оффлайн) значок в списке чатов */
+.online-status-chat-list {
+  left: 44px;
+  bottom: 0;
+}
+
+.chat-info {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Имя и фамилия собеседников */
+.chat-info > h3 {
+  color: var(--white);
+  font-size: 93%;
+}
+
+/* Текст последнего сообщения */
+.chat-info > p {
+  color: var(--lightgray);
+  font-size: 90%;
+}
+
+/* Информация о чате */
+.message-info {
+  height: 70px;
+}
+
+/* Время написания последнего сообщения */
+.time-last-message {
+  color: var(--gray);
+  font-size: 13px;
+}
+
+/* Количество непрочитанных сообщений */
+.unread-messages-count > span {
+  display: inline-block;
+  width: 20px;
+  background-color: var(--blue);
+  border-radius: 25px;
+  color: var(--white);
+  font-size: 13px;
+
+  transition: opacity 0.3s ease-out;
+}
+
+/* ========== ========== */
+
+/* ========== Контент чата ========== */
+#chat-content {
+  max-height: 100vh;
+}
+
+/* ===== Кнопка назад ===== */
+#go-back-button {
+  transition: transform 0.2s ease-out, color 0.2s ease-out;
+}
+
+#go-back-button:hover {
+  transform: scale(1.10);
+}
+
+#go-back-button:hover > a > i {
+  color: var(--white)
+}
+
+#go-back-button > a > i {
+  font-size: 23px;
+  background: none;
+  color: var(--lightgray);
+}
+
+/* ===== ===== */
+
+/* ===== Фото собеседника в шапке чата ===== */
+.recipient-header-image {
+  width: 40px;
+}
+
+.recipient-header-image > img {
+  width: 35px;
+}
+
+/* ===== =====*/
+
+.online-status-chat-header {
+  left: 37px;
+  bottom: -1px;
+}
+
+.recipient-name {
+  font-size: 100%;
+  font-weight: 600;
+  color: var(--white);
+}
+
+#chat-messages {
+  overflow-y: auto;
+  height: calc(100% - 122px);
+}
+
+/* ===== Поле ввода сообщения ===== */
+.message-input-container {
+  height: 69px;
+  border-top: 2px solid var(--gray2);
+  background-color: var(--lightblack);
+}
+
+.message-input {
+  margin-bottom: 3px;
+  width: 100%;
+  height: 38px;
+  resize: none;
+  border: none;
+  padding-right: 50px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: var(--lightgray);
+  outline: none;
+  transition: background-color 0.2s ease-out;
+}
+
+.message-input::placeholder {
+  transition: opacity 0.2s ease-out;
+}
+
+.message-input:focus::placeholder {
+  opacity: 0;
+}
+
+/* ===== ===== */
+
+/* ===== Кнопка отправки сообщения ===== */
+.send-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 38px;
+  width: 45px;
+  border: none;
+  font-size: 21px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #333;
+  color: #fff;
+  transition: all 0.2s ease-out;
+}
+
+.send-button:hover {
+  background-color: var(--white);
+  color: rgb(0, 0, 0);
+  box-shadow: 0 0 15px 3px rgba(236, 236, 236, 0.5);
+}
+
+/* ===== ===== */
+
+/* ===== Оформление сообщений чата ===== */
+.fade-in {
+  opacity: 0;
+  animation: fade-in 0.3s forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.message-group-received {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.message-group-received > div:first-child {
+  margin-top: auto;
+  margin-right: 5px;
+}
+
+.message-group-received > div:last-child {
+  flex-grow: 1;
+}
+
+.message-group-received > div:first-child > img {
+  border-radius: 50%;
+  height: 25px;
+  width: 25px;
+}
+
+.message-received {
+  max-width: 60%;
+  word-break: break-word;
+  margin: 2px 0;
+  display: flex;
+}
+
+.message-received:first-child > .message-received-text {
+  border-top-left-radius: 20px;
+}
+
+.message-received:last-child > .message-received-text {
+  border-bottom-left-radius: 20px;
+}
+
+.message-received-text {
+  padding: 10px;
+  min-height: 20px;
+  background: #878787;
+  border-radius: 4px 20px 20px 4px;
+  text-align: left;
+}
+
+.message-group-sent {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.message-sent {
+  max-width: 60%;
+  word-break: break-word;
+  display: flex;
+  margin: 2px 0 2px auto;
+}
+
+.message-sent-text {
+  background: #0099ff;
+  border-radius: 20px 4px 4px 20px;
+  min-height: 20px;
+  padding: 10px;
+  margin-left: auto;
+  text-align: left;
+}
+
+.message-sent:first-child > .message-sent-text {
+  border-top-right-radius: 20px;
+}
+
+.message-sent:last-child > .message-sent-text {
+  border-bottom-right-radius: 20px;
+}
+
+.message-sent-status {
+  width: 15px;
+  display: flex;
+  margin-left: 5px;
+  font-size: 15px;
+  color: rgba(134, 142, 153, 0.5);
+}
+
+.message-sent-status > img {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-top: auto;
+}
+
+.message-sent-status > i {
+  margin-top: auto;
+}
+
+/* ========== ========== */
