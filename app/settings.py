@@ -46,12 +46,10 @@ INSTALLED_APPS = [
 	'phonenumber_field',
 	'django_resized',
 	'notifications',
-	'bootstrap5',
+	'django_bootstrap5',
 
 	'channels',
-	'channels_redis',
-
-	# 'sslserver',
+	'channels_redis'
 	]
 
 MIDDLEWARE = [
