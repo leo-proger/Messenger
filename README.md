@@ -1,3 +1,14 @@
 # Messenger
 
-This is my old project - a primitive messenger on Django + WebSockets. It has not been completed and most likely will not be.
+This is a simple messenger on Django, Bootstrap 5 and channels. It's not done and won't be.
+
+## Features
+- Messaging in real time
+- Unread messages
+- Profile
+- Edit profile (not completed)
+
+## How to run
+- Clone repository
+- Go to project dir
+- Run `python manage.py runserver 8000`
