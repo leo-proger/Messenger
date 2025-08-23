@@ -11,4 +11,5 @@ This is a simple messenger on Django, Bootstrap 5 and channels. It's not done an
 ## How to run
 - Clone repository
 - Go to project dir
+- Run `pip install -r requirements.txt`
 - Run `python manage.py runserver 8000`
