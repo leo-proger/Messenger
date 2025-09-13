@@ -9,3 +9,4 @@ daphne==4.2.1
 django-bootstrap5==25.2
 phonenumberslite==9.0.12
 pillow==11.3.0
+django-resized==1.0.3
