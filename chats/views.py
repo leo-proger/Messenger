@@ -20,18 +20,13 @@ class ChatCreateView(CreateView):
 
 	def get_form_kwargs(self):
 		kwargs = super().get_form_kwargs()
-		kwargs['user'] = self.request.user.email
+		kwargs['user'] = self.request.user
 		return kwargs
 
 	def form_valid(self, form):
 		recipient = form.cleaned_data['recipient']
-		# existing_chat = Chat.objects.filter(members=recipient).distinct().first()
-
-		# if existing_chat:
-		# 	return redirect('chats:chat_detail', chat_uuid=existing_chat.uuid)
-		# else:
-		chat = Chat.objects.create(created_by=self.request.user.email)
-		chat.members.add(self.request.user.email, recipient)
+		chat = Chat.objects.create(created_by=self.request.user)
+		chat.members.add(self.request.user, recipient)
 		return redirect('chats:chat_detail', chat_uuid=chat.uuid)
 
 
