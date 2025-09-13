@@ -77,7 +77,7 @@ def user_profile_view(request, user_id):
 		'user_id': user_id,
 		'user_full_name': user.get_full_name(),
 		'user_profile_image': user.user_profile.profile_image,
-		'user_biography': user.user_profile.biography.strip(),
+		'user_biography': (user.user_profile.biography or '').strip(),
 		'user_posts': user.user_posts.all(),
 		'user_online': user_online,
 
