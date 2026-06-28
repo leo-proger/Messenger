@@ -16,7 +16,7 @@
   {% bootstrap_javascript %}
 
   <link rel="stylesheet" href="{% static 'users/css/base_styles.css' %}" type="text/css">
-  <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
   {% block links %}{% endblock links %}
 
@@ -36,10 +36,10 @@
             <a href="{% url 'chats:create_chat' %}" class="nav-link"><i class="fa-solid fa-pen"></i></a>
           </li>
           <li class="nav-item mt-1">
-            <a href="{% url 'chats:chat_list' %}" class="nav-link"><i class="fa-solid fa-messages"></i></a>
+            <a href="{% url 'chats:chat_list' %}" class="nav-link"><i class="fa-solid fa-comments"></i></a>
           </li>
           <li class="nav-item mt-1">
-            <a href="#" class="nav-link"><i class="fa-duotone fa-user-group"></i></a>
+            <a href="#" class="nav-link"><i class="fa-solid fa-user-group"></i></a>
           </li>
           <li class="nav-item mt-1">
             <a href="#" class="nav-link"><i class="fa-solid fa-gear"></i></a>
